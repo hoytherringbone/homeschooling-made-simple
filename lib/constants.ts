@@ -1,0 +1,82 @@
+export const SUBJECT_COLORS = [
+  "#0D9488", // teal
+  "#2563EB", // blue
+  "#9333EA", // purple
+  "#16A34A", // green
+  "#F59E0B", // amber
+  "#E11D48", // rose
+  "#0F766E", // teal-dark
+  "#7C3AED", // violet
+  "#DC2626", // red
+  "#0891B2", // cyan
+  "#CA8A04", // yellow
+  "#4F46E5", // indigo
+  "#C026D3", // fuchsia
+  "#059669", // emerald
+  "#EA580C", // orange
+  "#6366F1", // blue-violet
+];
+
+export const DEFAULT_SUBJECTS = [
+  "Math",
+  "Reading",
+  "Language Arts",
+  "Science",
+  "History",
+  "Geography",
+  "Social Studies",
+  "Spanish",
+  "Foreign Language",
+  "Art",
+  "Music",
+  "Physical Education",
+  "Health",
+  "Computer Science",
+  "Bible",
+  "Life Skills",
+];
+
+export const GRADE_LEVELS = [
+  "Pre-K",
+  "Kindergarten",
+  "1st",
+  "2nd",
+  "3rd",
+  "4th",
+  "5th",
+  "6th",
+  "7th",
+  "8th",
+  "9th",
+  "10th",
+  "11th",
+  "12th",
+];
+
+export const ASSIGNMENT_STATUS = {
+  ASSIGNED: { label: "Assigned", bg: "bg-slate-100", text: "text-slate-700" },
+  IN_PROGRESS: { label: "In Progress", bg: "bg-blue-50", text: "text-blue-700" },
+  SUBMITTED: { label: "Submitted", bg: "bg-amber-50", text: "text-amber-700" },
+  RETURNED: { label: "Returned", bg: "bg-rose-50", text: "text-rose-700" },
+  COMPLETED: { label: "Completed", bg: "bg-green-50", text: "text-green-700" },
+} as const;
+
+export const VALID_TRANSITIONS: Record<string, { roles: string[]; to: string[] }> = {
+  ASSIGNED: { roles: ["STUDENT"], to: ["IN_PROGRESS"] },
+  IN_PROGRESS: { roles: ["STUDENT"], to: ["SUBMITTED"] },
+  SUBMITTED: { roles: ["PARENT", "SUPER_ADMIN"], to: ["COMPLETED", "RETURNED"] },
+  RETURNED: { roles: ["STUDENT"], to: ["IN_PROGRESS"] },
+  COMPLETED: { roles: ["PARENT", "SUPER_ADMIN"], to: ["RETURNED"] },
+};
+
+export const PRIORITY_OPTIONS = [
+  { value: "LOW", label: "Low" },
+  { value: "MEDIUM", label: "Medium" },
+  { value: "HIGH", label: "High" },
+] as const;
+
+export const PRIORITY_COLORS = {
+  LOW: { bg: "bg-slate-100", text: "text-slate-600" },
+  MEDIUM: { bg: "bg-blue-50", text: "text-blue-600" },
+  HIGH: { bg: "bg-rose-50", text: "text-rose-600" },
+} as const;

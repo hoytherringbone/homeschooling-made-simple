@@ -1,0 +1,229 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Family {
+  id                   String   @id @default(cuid())
+  name                 String
+  subscriptionStatus   String   @default("trial") // trial, active, past_due, cancelled
+  stripeCustomerId     String?  @unique
+  stripeSubscriptionId String?  @unique
+  trialEndsAt          DateTime
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  users      User[]
+  students   Student[]
+  subjects   Subject[]
+  assignments Assignment[]
+  templates  AssignmentTemplate[]
+}
+
+model User {
+  id             String   @id @default(cuid())
+  email          String   @unique
+  name           String
+  hashedPassword String
+  role           String   @default("PARENT") // SUPER_ADMIN, PARENT, STUDENT
+  familyId       String
+  onboarded      Boolean  @default(false)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  family       Family        @relation(fields: [familyId], references: [id], onDelete: Cascade)
+  studentProfile Student?
+  comments      Comment[]
+  activityLogs  ActivityLog[]
+  notifications Notification[]
+  accounts      Account[]
+  sessions      Session[]
+}
+
+// Auth.js required models
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model Student {
+  id         String   @id @default(cuid())
+  name       String
+  gradeLevel String?
+  avatarUrl  String?
+  familyId   String
+  userId     String?  @unique
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  family         Family          @relation(fields: [familyId], references: [id], onDelete: Cascade)
+  user           User?           @relation(fields: [userId], references: [id])
+  assignments    Assignment[]
+  goals          Goal[]
+  attendanceLogs AttendanceLog[]
+}
+
+model Subject {
+  id        String   @id @default(cuid())
+  name      String
+  color     String?
+  familyId  String
+  createdAt DateTime @default(now())
+
+  family      Family               @relation(fields: [familyId], references: [id], onDelete: Cascade)
+  assignments Assignment[]
+  templates   AssignmentTemplate[]
+}
+
+model Assignment {
+  id               String   @id @default(cuid())
+  title            String
+  description      String?
+  status           String   @default("ASSIGNED") // ASSIGNED, IN_PROGRESS, SUBMITTED, RETURNED, COMPLETED
+  priority         String   @default("MEDIUM") // LOW, MEDIUM, HIGH
+  dueDate          DateTime?
+  assignedDate     DateTime @default(now())
+  completedDate    DateTime?
+  estimatedMinutes Int?
+  actualMinutes    Int?
+  gradeValue       Float?
+  gradeLabel       String?
+
+  studentId  String
+  subjectId  String?
+  familyId   String
+  templateId String?
+
+  student    Student             @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  subject    Subject?            @relation(fields: [subjectId], references: [id])
+  family     Family              @relation(fields: [familyId], references: [id], onDelete: Cascade)
+  template   AssignmentTemplate? @relation(fields: [templateId], references: [id])
+  comments      Comment[]
+  activityLog   ActivityLog[]
+  notifications Notification[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model AssignmentTemplate {
+  id               String @id @default(cuid())
+  title            String
+  description      String?
+  subjectId        String?
+  estimatedMinutes Int?
+  familyId         String
+
+  family      Family       @relation(fields: [familyId], references: [id], onDelete: Cascade)
+  subject     Subject?     @relation(fields: [subjectId], references: [id])
+  assignments Assignment[]
+
+  createdAt DateTime @default(now())
+}
+
+model Comment {
+  id           String   @id @default(cuid())
+  content      String
+  authorId     String
+  authorName   String
+  authorRole   String
+  assignmentId String
+  createdAt    DateTime @default(now())
+
+  assignment Assignment @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
+  author     User       @relation(fields: [authorId], references: [id])
+}
+
+model ActivityLog {
+  id              String   @id @default(cuid())
+  action          String
+  details         String?
+  performedBy     String
+  performedByName String
+  assignmentId    String?
+  createdAt       DateTime @default(now())
+
+  assignment Assignment? @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
+  user       User        @relation(fields: [performedBy], references: [id])
+}
+
+model Goal {
+  id           String    @id @default(cuid())
+  title        String
+  description  String?
+  targetCount  Int
+  currentCount Int       @default(0)
+  subjectId    String?
+  studentId    String
+  termStart    DateTime
+  termEnd      DateTime
+  familyId     String
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  student Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+}
+
+model Notification {
+  id           String   @id @default(cuid())
+  type         String   // ASSIGNMENT_CREATED, STATUS_CHANGED, COMMENT_ADDED
+  message      String
+  read         Boolean  @default(false)
+  userId       String
+  familyId     String
+  assignmentId String?
+  actorName    String
+  createdAt    DateTime @default(now())
+
+  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  assignment Assignment? @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
+
+  @@index([userId, read])
+}
+
+model AttendanceLog {
+  id          String   @id @default(cuid())
+  date        DateTime
+  hoursLogged Float
+  subjectId   String?
+  studentId   String
+  familyId    String
+  notes       String?
+  createdAt   DateTime @default(now())
+
+  student Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+}
