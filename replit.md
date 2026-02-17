@@ -35,13 +35,24 @@ A Next.js 16 homeschooling management application that helps parents organize as
 - Login and signup use server actions (`lib/actions/auth.ts`) to avoid CSRF issues behind the Replit proxy
 - `useSecureCookies: false` is set in `lib/auth.ts` because the app runs HTTP internally behind an HTTPS proxy
 - Middleware (`middleware.ts`) handles route protection and onboarding redirects
+- Roles: SUPER_ADMIN, PARENT, STUDENT
 - Demo credentials: parent@demo.com / password123
+- Admin credentials: admin@hsms.com / admin123
+
+## Super Admin
+- Super admin sees a platform-wide dashboard with all families, parents, students, and assignment stats
+- `scripts/create-admin.ts` safely creates/upgrades a super admin user without wiping data
+- Usage: `ADMIN_EMAIL=you@email.com ADMIN_PASSWORD=yourpass ADMIN_NAME="Your Name" npx tsx scripts/create-admin.ts`
+- Runs against whatever DATABASE_URL is set (dev or prod)
 
 ## Development
 - Dev server runs on port 5000 (bound to 0.0.0.0)
 - `allowedDevOrigins` configured in `next.config.ts` for Replit domains
 
 ## Recent Changes
+- 2026-02-17: Added super admin dashboard with platform-wide visibility (all families, parents, students, stats)
+- 2026-02-17: Created safe admin creation script (scripts/create-admin.ts) that doesn't wipe existing data
+- 2026-02-17: Fixed assignment status filter to handle multiple values (array) from query params
 - 2026-02-17: Documented separate dev/prod databases; added seed to deploy build step
 - 2026-02-17: Removed stale external DATABASE_URL secret (was pointing to old neon.tech)
 - 2026-02-17: Fixed auth cookie issue — set `useSecureCookies: false` for Replit proxy compatibility

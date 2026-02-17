@@ -33,6 +33,11 @@ const parentNav = [
   { label: "Notifications", href: "/notifications", icon: Bell },
 ];
 
+const adminNav = [
+  { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+  { label: "Settings", href: "/settings", icon: Settings },
+];
+
 const studentNav = [
   { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
   { label: "My Work", href: "/assignments", icon: ClipboardList },
@@ -55,7 +60,12 @@ interface AppSidebarProps {
 export function AppSidebar({ user, unreadCount }: AppSidebarProps) {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const navItems = user.role === "STUDENT" ? studentNav : parentNav;
+  const navItems =
+    user.role === "SUPER_ADMIN"
+      ? adminNav
+      : user.role === "STUDENT"
+        ? studentNav
+        : parentNav;
 
   const isActive = (href: string) => {
     if (href === "/dashboard") return pathname === "/dashboard";
