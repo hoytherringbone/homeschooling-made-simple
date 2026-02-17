@@ -3,17 +3,20 @@
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
+import bcrypt from "bcryptjs";
 import {
   createSubjectSchema,
   updateSubjectSchema,
   updateFamilyNameSchema,
   updateStudentSchema,
   createStudentSchema,
+  resetStudentPasswordSchema,
   type CreateSubjectValues,
   type UpdateSubjectValues,
   type UpdateFamilyNameValues,
   type UpdateStudentValues,
   type CreateStudentValues,
+  type ResetStudentPasswordValues,
 } from "@/lib/validations/settings";
 import { SUBJECT_COLORS } from "@/lib/constants";
 
@@ -127,11 +130,35 @@ export async function createStudent(values: CreateStudentValues) {
   const parsed = createStudentSchema.safeParse(values);
   if (!parsed.success) return { error: parsed.error.issues[0]?.message || "Invalid data" };
 
+  const { name, gradeLevel, email, password } = parsed.data;
+  const familyId = session.user.familyId;
+
+  let userId: string | undefined;
+
+  if (email && password) {
+    const existingUser = await db.user.findUnique({ where: { email } });
+    if (existingUser) return { error: "An account with this email already exists" };
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const user = await db.user.create({
+      data: {
+        email,
+        name,
+        hashedPassword,
+        role: "STUDENT",
+        familyId,
+        onboarded: true,
+      },
+    });
+    userId = user.id;
+  }
+
   await db.student.create({
     data: {
-      name: parsed.data.name,
-      gradeLevel: parsed.data.gradeLevel || null,
-      familyId: session.user.familyId,
+      name,
+      gradeLevel: gradeLevel || null,
+      familyId,
+      ...(userId && { userId }),
     },
   });
 
@@ -184,5 +211,38 @@ export async function deleteStudent(studentId: string) {
 
   revalidatePath("/settings");
   revalidatePath("/students");
+  return { success: true };
+}
+
+// --- Reset Student Password ---
+
+export async function resetStudentPassword(values: ResetStudentPasswordValues) {
+  const session = await auth();
+  if (!session?.user?.id || !session.user.familyId) return { error: "Not authenticated" };
+  if (!isParent(session.user.role)) return { error: "Only parents or admins can reset passwords" };
+
+  const parsed = resetStudentPasswordSchema.safeParse(values);
+  if (!parsed.success) return { error: parsed.error.issues[0]?.message || "Invalid data" };
+
+  const { studentId, newPassword } = parsed.data;
+
+  const whereClause = session.user.role === "SUPER_ADMIN"
+    ? { id: studentId }
+    : { id: studentId, familyId: session.user.familyId };
+
+  const student = await db.student.findFirst({
+    where: whereClause,
+    include: { user: true },
+  });
+
+  if (!student) return { error: "Student not found" };
+  if (!student.userId || !student.user) return { error: "This student doesn't have a login account" };
+
+  const hashedPassword = await bcrypt.hash(newPassword, 10);
+  await db.user.update({
+    where: { id: student.userId },
+    data: { hashedPassword },
+  });
+
   return { success: true };
 }

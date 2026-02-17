@@ -22,7 +22,7 @@ export default async function SettingsPage() {
     }),
     db.student.findMany({
       where: { familyId },
-      select: { id: true, name: true, gradeLevel: true },
+      select: { id: true, name: true, gradeLevel: true, userId: true },
       orderBy: { name: "asc" },
     }),
   ]);

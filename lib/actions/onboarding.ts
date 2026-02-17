@@ -4,6 +4,7 @@ import { db } from "@/lib/db";
 import { auth, signIn } from "@/lib/auth";
 import { studentsStepSchema, subjectsStepSchema } from "@/lib/validations/onboarding";
 import { z } from "zod";
+import bcrypt from "bcryptjs";
 
 export async function createStudents(
   familyId: string,
@@ -14,15 +15,57 @@ export async function createStudents(
     return { error: "Invalid student data" };
   }
 
-  const created = await db.student.createManyAndReturn({
-    data: parsed.data.students.map((s) => ({
-      name: s.name,
-      gradeLevel: s.gradeLevel,
-      familyId,
-    })),
-  });
+  const emails = parsed.data.students
+    .map((s) => s.email)
+    .filter((e): e is string => !!e && e !== "");
 
-  return { success: true, count: created.length };
+  if (emails.length > 0) {
+    const uniqueEmails = new Set(emails);
+    if (uniqueEmails.size !== emails.length) {
+      return { error: "Duplicate email addresses found" };
+    }
+
+    const existingUsers = await db.user.findMany({
+      where: { email: { in: emails } },
+      select: { email: true },
+    });
+    if (existingUsers.length > 0) {
+      return { error: `Email already in use: ${existingUsers[0].email}` };
+    }
+  }
+
+  let createdCount = 0;
+
+  for (const s of parsed.data.students) {
+    let userId: string | undefined;
+
+    if (s.email && s.password) {
+      const hashedPassword = await bcrypt.hash(s.password, 10);
+      const user = await db.user.create({
+        data: {
+          email: s.email,
+          name: s.name,
+          hashedPassword,
+          role: "STUDENT",
+          familyId,
+          onboarded: true,
+        },
+      });
+      userId = user.id;
+    }
+
+    await db.student.create({
+      data: {
+        name: s.name,
+        gradeLevel: s.gradeLevel,
+        familyId,
+        ...(userId && { userId }),
+      },
+    });
+    createdCount++;
+  }
+
+  return { success: true, count: createdCount };
 }
 
 export async function createSubjects(

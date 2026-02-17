@@ -3,6 +3,8 @@ import { z } from "zod";
 export const studentSchema = z.object({
   name: z.string().min(1, "Name is required"),
   gradeLevel: z.string().min(1, "Grade level is required"),
+  email: z.string().email("Invalid email").optional().or(z.literal("")),
+  password: z.string().min(6, "Password must be at least 6 characters").optional().or(z.literal("")),
 });
 
 export const studentsStepSchema = z.object({
