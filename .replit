@@ -13,6 +13,9 @@ AUTH_SECRET = "hoUP6T9X7S9mp7hI8qwbywpHJ20GzUijusWk2jgcZEE="
 [userenv.development]
 AUTH_URL = "https://8d4e9df4-68c9-480a-bcc7-d296844668fb-00-2wsho2cyi1vu5.spock.replit.dev"
 
+[userenv.production]
+SEED_ON_DEPLOY = "true"
+
 [workflows]
 runButton = "Project"
 
@@ -44,5 +47,5 @@ externalPort = 80
 [deployment]
 deploymentTarget = "autoscale"
 run = ["npm", "run", "start"]
-build = ["bash", "-c", "npx prisma generate && npx prisma db push --skip-generate && npx prisma db seed && next build"]
+build = ["bash", "-c", "npx prisma generate && npx prisma db push && if [ \"$SEED_ON_DEPLOY\" = \"true\" ]; then npx tsx prisma/seed.ts; fi && npx next build"]
 publicDir = "public"
