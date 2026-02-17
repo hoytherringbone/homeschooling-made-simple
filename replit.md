@@ -7,7 +7,7 @@ A Next.js 16 homeschooling management application that helps parents organize as
 - **Framework**: Next.js 16 (App Router, Turbopack)
 - **Language**: TypeScript
 - **Database**: PostgreSQL with Prisma ORM (v7)
-- **Auth**: NextAuth v5 (credentials-based)
+- **Auth**: NextAuth v5 (credentials-based, server actions for login/signup)
 - **Styling**: Tailwind CSS v4, Radix UI, shadcn/ui
 - **State**: React Query (TanStack)
 - **Forms**: React Hook Form + Zod validation
@@ -21,13 +21,21 @@ A Next.js 16 homeschooling management application that helps parents organize as
 ## Environment Variables
 - `DATABASE_URL` - PostgreSQL connection string (auto-configured)
 - `AUTH_SECRET` - NextAuth secret key
+- `AUTH_URL` - Set in development to the Replit dev domain (HTTPS)
+
+## Auth Notes
+- Login and signup use server actions (`lib/actions/auth.ts`) to avoid CSRF issues behind the Replit proxy
+- `useSecureCookies: false` is set in `lib/auth.ts` because the app runs HTTP internally behind an HTTPS proxy
+- Middleware (`middleware.ts`) handles route protection and onboarding redirects
+- Demo credentials: parent@demo.com / password123
 
 ## Development
-- Dev server runs on port 5000 (`next dev -H 0.0.0.0 -p 5000`)
+- Dev server runs on port 5000 (bound to 0.0.0.0)
 - Database schema managed via Prisma (`npx prisma db push`)
+- `allowedDevOrigins` configured in `next.config.ts` for Replit domains
 
 ## Recent Changes
+- 2026-02-17: Fixed auth cookie issue — set `useSecureCookies: false` for Replit proxy compatibility
+- 2026-02-17: Fixed login/signup redirects with router.push fallback navigation
+- 2026-02-17: Converted login/signup to server actions to bypass CSRF proxy issues
 - 2026-02-17: Initial import and Replit environment setup
-  - Configured Next.js to run on port 5000 with allowedDevOrigins
-  - Set up PostgreSQL database and Prisma schema
-  - Generated AUTH_SECRET

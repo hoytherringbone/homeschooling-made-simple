@@ -5,11 +5,13 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signupSchema, type SignupValues } from "@/lib/validations/auth";
 import { signup } from "@/lib/actions/auth";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 export default function SignupPage() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   const {
     register,
@@ -26,9 +28,13 @@ export default function SignupPage() {
       const result = await signup(values);
       if (result?.error) {
         setError(result.error);
+      } else {
+        router.push("/onboarding");
+        router.refresh();
       }
     } catch {
-      // signIn with redirect throws a NEXT_REDIRECT error — that's expected
+      router.push("/onboarding");
+      router.refresh();
     } finally {
       setLoading(false);
     }
