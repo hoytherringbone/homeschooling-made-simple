@@ -1,0 +1,566 @@
+{
+  "families": [
+    {
+      "id": "cmlpw49wp0000ytnn02a04x6j",
+      "name": "The Smith Family",
+      "subscriptionStatus": "trial",
+      "stripeCustomerId": null,
+      "stripeSubscriptionId": null,
+      "trialEndsAt": "2026-03-03T00:54:00.729Z",
+      "createdAt": "2026-02-17T00:54:00.745Z",
+      "updatedAt": "2026-02-17T00:54:00.745Z"
+    },
+    {
+      "id": "cmlpxfu3o0000jenngbnwuh1a",
+      "name": "Owen",
+      "subscriptionStatus": "trial",
+      "stripeCustomerId": null,
+      "stripeSubscriptionId": null,
+      "trialEndsAt": "2026-03-03T01:30:59.728Z",
+      "createdAt": "2026-02-17T01:30:59.746Z",
+      "updatedAt": "2026-02-17T01:30:59.746Z"
+    },
+    {
+      "id": "cmlq0agj700002cnnllf1fwh7",
+      "name": "HSMS Administration",
+      "subscriptionStatus": "active",
+      "stripeCustomerId": null,
+      "stripeSubscriptionId": null,
+      "trialEndsAt": "2099-12-31T00:00:00.000Z",
+      "createdAt": "2026-02-17T02:50:47.731Z",
+      "updatedAt": "2026-02-17T02:50:47.731Z"
+    }
+  ],
+  "users": [
+    {
+      "id": "cmlpw49xj0001ytnnte3uw1g5",
+      "email": "parent@demo.com",
+      "name": "Sarah Smith",
+      "hashedPassword": "$2b$10$yxU9G4.Zo6IinokbFxXlUufj9gc.PkJI4vMQH6t1JNOPMDgqB8ESi",
+      "role": "PARENT",
+      "familyId": "cmlpw49wp0000ytnn02a04x6j",
+      "onboarded": true,
+      "createdAt": "2026-02-17T00:54:00.775Z",
+      "updatedAt": "2026-02-17T00:54:00.775Z"
+    },
+    {
+      "id": "cmlpw49xp0002ytnnrofj2pdh",
+      "email": "emma@demo.com",
+      "name": "Emma Smith",
+      "hashedPassword": "$2b$10$yxU9G4.Zo6IinokbFxXlUufj9gc.PkJI4vMQH6t1JNOPMDgqB8ESi",
+      "role": "STUDENT",
+      "familyId": "cmlpw49wp0000ytnn02a04x6j",
+      "onboarded": true,
+      "createdAt": "2026-02-17T00:54:00.781Z",
+      "updatedAt": "2026-02-17T00:54:00.781Z"
+    },
+    {
+      "id": "cmlpw49xs0003ytnn89y0qpoq",
+      "email": "liam@demo.com",
+      "name": "Liam Smith",
+      "hashedPassword": "$2b$10$yxU9G4.Zo6IinokbFxXlUufj9gc.PkJI4vMQH6t1JNOPMDgqB8ESi",
+      "role": "STUDENT",
+      "familyId": "cmlpw49wp0000ytnn02a04x6j",
+      "onboarded": true,
+      "createdAt": "2026-02-17T00:54:00.784Z",
+      "updatedAt": "2026-02-17T00:54:00.784Z"
+    },
+    {
+      "id": "cmlpw4a1j0014ytnn03dcocaq",
+      "email": "admin@hsms.com",
+      "name": "Admin User",
+      "hashedPassword": "$2b$10$yxU9G4.Zo6IinokbFxXlUufj9gc.PkJI4vMQH6t1JNOPMDgqB8ESi",
+      "role": "SUPER_ADMIN",
+      "familyId": "cmlpw49wp0000ytnn02a04x6j",
+      "onboarded": true,
+      "createdAt": "2026-02-17T00:54:00.919Z",
+      "updatedAt": "2026-02-17T00:54:00.919Z"
+    },
+    {
+      "id": "cmlpxfu3p0001jenny2z0mmpt",
+      "email": "jayowen@mac.com",
+      "name": "Jay Owen",
+      "hashedPassword": "$2b$10$zillFGI/weBF95uCyNyrROfrzml59NF3FFQ6kqnK4f4xB8emQfn9q",
+      "role": "PARENT",
+      "familyId": "cmlpxfu3o0000jenngbnwuh1a",
+      "onboarded": true,
+      "createdAt": "2026-02-17T01:30:59.746Z",
+      "updatedAt": "2026-02-17T01:40:39.821Z"
+    },
+    {
+      "id": "cmlq0agnl00012cnn8t0dn6vh",
+      "email": "brandonplowe@gmail.com",
+      "name": "Brandon Plowe",
+      "hashedPassword": "$2b$10$bZ5mK3UfvT/5Kyz0t4biNuKagk.aG0NoUDOYx.Sc7y371SQpQoiGy",
+      "role": "SUPER_ADMIN",
+      "familyId": "cmlq0agj700002cnnllf1fwh7",
+      "onboarded": true,
+      "createdAt": "2026-02-17T02:50:47.889Z",
+      "updatedAt": "2026-02-17T02:50:47.889Z"
+    }
+  ],
+  "subjects": [
+    {
+      "id": "cmlpw49y40006ytnnihilbep5",
+      "name": "Math",
+      "color": "#0D9488",
+      "familyId": "cmlpw49wp0000ytnn02a04x6j",
+      "createdAt": "2026-02-17T00:54:00.796Z"
+    },
+    {
+      "id": "cmlpw49y70007ytnnmo84fdxd",
+      "name": "Reading",
+      "color": "#2563EB",
+      "familyId": "cmlpw49wp0000ytnn02a04x6j",
+      "createdAt": "2026-02-17T00:54:00.799Z"
+    },
+    {
+      "id": "cmlpw49ya0008ytnne8r2n6k9",
+      "name": "Science",
+      "color": "#9333EA",
+      "familyId": "cmlpw49wp0000ytnn02a04x6j",
+      "createdAt": "2026-02-17T00:54:00.802Z"
+    },
+    {
+      "id": "cmlpw49yd0009ytnnpmpa4s9o",
+      "name": "Language Arts",
+      "color": "#16A34A",
+      "familyId": "cmlpw49wp0000ytnn02a04x6j",
+      "createdAt": "2026-02-17T00:54:00.805Z"
+    },
+    {
+      "id": "cmlpw49yg000aytnnpyc6jfo7",
+      "name": "History",
+      "color": "#F59E0B",
+      "familyId": "cmlpw49wp0000ytnn02a04x6j",
+      "createdAt": "2026-02-17T00:54:00.808Z"
+    },
+    {
+      "id": "cmlpw49yj000bytnn6lmuboiu",
+      "name": "Art",
+      "color": "#E11D48",
+      "familyId": "cmlpw49wp0000ytnn02a04x6j",
+      "createdAt": "2026-02-17T00:54:00.811Z"
+    },
+    {
+      "id": "cmlpxs8ok0001zynnd6mk8hi0",
+      "name": "Math",
+      "color": "#0D9488",
+      "familyId": "cmlpxfu3o0000jenngbnwuh1a",
+      "createdAt": "2026-02-17T01:40:38.501Z"
+    },
+    {
+      "id": "cmlpxs8ok0002zynnn2jku8d3",
+      "name": "Reading",
+      "color": "#2563EB",
+      "familyId": "cmlpxfu3o0000jenngbnwuh1a",
+      "createdAt": "2026-02-17T01:40:38.501Z"
+    },
+    {
+      "id": "cmlpxs8ok0003zynnaizezvwu",
+      "name": "Language Arts",
+      "color": "#9333EA",
+      "familyId": "cmlpxfu3o0000jenngbnwuh1a",
+      "createdAt": "2026-02-17T01:40:38.501Z"
+    },
+    {
+      "id": "cmlpxs8ok0004zynnwf6oymly",
+      "name": "Science",
+      "color": "#16A34A",
+      "familyId": "cmlpxfu3o0000jenngbnwuh1a",
+      "createdAt": "2026-02-17T01:40:38.501Z"
+    },
+    {
+      "id": "cmlpxs8ok0005zynnt71xylp7",
+      "name": "History",
+      "color": "#F59E0B",
+      "familyId": "cmlpxfu3o0000jenngbnwuh1a",
+      "createdAt": "2026-02-17T01:40:38.501Z"
+    }
+  ],
+  "students": [
+    {
+      "id": "cmlpw49xw0004ytnnpycbg3zm",
+      "name": "Emma",
+      "gradeLevel": "5th",
+      "avatarUrl": null,
+      "familyId": "cmlpw49wp0000ytnn02a04x6j",
+      "userId": "cmlpw49xp0002ytnnrofj2pdh",
+      "createdAt": "2026-02-17T00:54:00.788Z",
+      "updatedAt": "2026-02-17T00:54:00.788Z"
+    },
+    {
+      "id": "cmlpw49y00005ytnnuzxw661s",
+      "name": "Liam",
+      "gradeLevel": "3rd",
+      "avatarUrl": null,
+      "familyId": "cmlpw49wp0000ytnn02a04x6j",
+      "userId": "cmlpw49xs0003ytnn89y0qpoq",
+      "createdAt": "2026-02-17T00:54:00.792Z",
+      "updatedAt": "2026-02-17T00:54:00.792Z"
+    },
+    {
+      "id": "cmlpxs0900000zynn07tzhgbw",
+      "name": "Lincoln",
+      "gradeLevel": "12th",
+      "avatarUrl": null,
+      "familyId": "cmlpxfu3o0000jenngbnwuh1a",
+      "userId": null,
+      "createdAt": "2026-02-17T01:40:27.577Z",
+      "updatedAt": "2026-02-17T01:40:27.577Z"
+    }
+  ],
+  "assignmentTemplates": [
+    {
+      "id": "cmlpw4a06000sytnndiftpody",
+      "title": "Weekly Reading Journal",
+      "description": "Read for 30 minutes and write a journal entry about what you read. Include: main characters, setting, and your favorite part.",
+      "subjectId": "cmlpw49y70007ytnnmo84fdxd",
+      "estimatedMinutes": 45,
+      "familyId": "cmlpw49wp0000ytnn02a04x6j",
+      "createdAt": "2026-02-17T00:54:00.870Z"
+    },
+    {
+      "id": "cmlpw4a0g000tytnnpsd3ge2w",
+      "title": "Math Practice Set",
+      "description": "Complete the practice problems for the current chapter.",
+      "subjectId": "cmlpw49y40006ytnnihilbep5",
+      "estimatedMinutes": 30,
+      "familyId": "cmlpw49wp0000ytnn02a04x6j",
+      "createdAt": "2026-02-17T00:54:00.880Z"
+    }
+  ],
+  "assignments": [
+    {
+      "id": "cmlpw49yn000cytnn76q5whhn",
+      "title": "Chapter 5: Fractions",
+      "description": "Complete exercises 1-20 on page 87. Show your work for each problem.",
+      "status": "ASSIGNED",
+      "priority": "HIGH",
+      "dueDate": "2026-02-18T00:54:00.814Z",
+      "assignedDate": "2026-02-17T00:54:00.815Z",
+      "completedDate": null,
+      "estimatedMinutes": 45,
+      "actualMinutes": null,
+      "gradeValue": null,
+      "gradeLabel": null,
+      "studentId": "cmlpw49xw0004ytnnpycbg3zm",
+      "subjectId": "cmlpw49y40006ytnnihilbep5",
+      "familyId": "cmlpw49wp0000ytnn02a04x6j",
+      "templateId": null,
+      "createdAt": "2026-02-17T00:54:00.815Z",
+      "updatedAt": "2026-02-17T00:54:00.815Z"
+    },
+    {
+      "id": "cmlpw49yu000dytnnry40mjtt",
+      "title": "Read Charlotte's Web Ch. 1-3",
+      "description": "Read and write a short summary paragraph for each chapter.",
+      "status": "IN_PROGRESS",
+      "priority": "MEDIUM",
+      "dueDate": "2026-02-18T00:54:00.814Z",
+      "assignedDate": "2026-02-17T00:54:00.822Z",
+      "completedDate": null,
+      "estimatedMinutes": 30,
+      "actualMinutes": null,
+      "gradeValue": null,
+      "gradeLabel": null,
+      "studentId": "cmlpw49xw0004ytnnpycbg3zm",
+      "subjectId": "cmlpw49y70007ytnnmo84fdxd",
+      "familyId": "cmlpw49wp0000ytnn02a04x6j",
+      "templateId": null,
+      "createdAt": "2026-02-17T00:54:00.822Z",
+      "updatedAt": "2026-02-17T00:54:00.822Z"
+    },
+    {
+      "id": "cmlpw49yz000eytnng6mp1fab",
+      "title": "Addition Worksheet",
+      "description": "Complete the two-digit addition worksheet. Try to finish without a calculator!",
+      "status": "SUBMITTED",
+      "priority": "MEDIUM",
+      "dueDate": "2026-02-17T00:54:00.814Z",
+      "assignedDate": "2026-02-17T00:54:00.827Z",
+      "completedDate": null,
+      "estimatedMinutes": 20,
+      "actualMinutes": null,
+      "gradeValue": null,
+      "gradeLabel": null,
+      "studentId": "cmlpw49y00005ytnnuzxw661s",
+      "subjectId": "cmlpw49y40006ytnnihilbep5",
+      "familyId": "cmlpw49wp0000ytnn02a04x6j",
+      "templateId": null,
+      "createdAt": "2026-02-17T00:54:00.827Z",
+      "updatedAt": "2026-02-17T00:54:00.827Z"
+    },
+    {
+      "id": "cmlpw49z3000fytnnv6xkk2p5",
+      "title": "Solar System Poster",
+      "description": "Create a poster showing the planets in order from the sun.",
+      "status": "COMPLETED",
+      "priority": "LOW",
+      "dueDate": "2026-02-15T00:54:00.814Z",
+      "assignedDate": "2026-02-17T00:54:00.831Z",
+      "completedDate": "2026-02-16T00:54:00.814Z",
+      "estimatedMinutes": 60,
+      "actualMinutes": null,
+      "gradeValue": null,
+      "gradeLabel": null,
+      "studentId": "cmlpw49xw0004ytnnpycbg3zm",
+      "subjectId": "cmlpw49ya0008ytnne8r2n6k9",
+      "familyId": "cmlpw49wp0000ytnn02a04x6j",
+      "templateId": null,
+      "createdAt": "2026-02-17T00:54:00.831Z",
+      "updatedAt": "2026-02-17T00:54:00.831Z"
+    },
+    {
+      "id": "cmlpw49z7000gytnnnt4x73tl",
+      "title": "Spelling Test Practice",
+      "description": "Practice spelling words from Unit 4. Write each word 3 times.",
+      "status": "RETURNED",
+      "priority": "MEDIUM",
+      "dueDate": "2026-02-16T00:54:00.814Z",
+      "assignedDate": "2026-02-17T00:54:00.835Z",
+      "completedDate": null,
+      "estimatedMinutes": 15,
+      "actualMinutes": null,
+      "gradeValue": null,
+      "gradeLabel": null,
+      "studentId": "cmlpw49y00005ytnnuzxw661s",
+      "subjectId": "cmlpw49y70007ytnnmo84fdxd",
+      "familyId": "cmlpw49wp0000ytnn02a04x6j",
+      "templateId": null,
+      "createdAt": "2026-02-17T00:54:00.835Z",
+      "updatedAt": "2026-02-17T00:54:00.835Z"
+    },
+    {
+      "id": "cmlpw49za000hytnnjw7lv7y9",
+      "title": "Science Lab Report",
+      "description": "Write up the results from our plant growth experiment. Include a hypothesis, observations, and conclusion.",
+      "status": "ASSIGNED",
+      "priority": "MEDIUM",
+      "dueDate": "2026-02-24T00:54:00.814Z",
+      "assignedDate": "2026-02-17T00:54:00.838Z",
+      "completedDate": null,
+      "estimatedMinutes": 40,
+      "actualMinutes": null,
+      "gradeValue": null,
+      "gradeLabel": null,
+      "studentId": "cmlpw49xw0004ytnnpycbg3zm",
+      "subjectId": "cmlpw49ya0008ytnne8r2n6k9",
+      "familyId": "cmlpw49wp0000ytnn02a04x6j",
+      "templateId": null,
+      "createdAt": "2026-02-17T00:54:00.838Z",
+      "updatedAt": "2026-02-17T00:54:00.838Z"
+    }
+  ],
+  "comments": [
+    {
+      "id": "cmlpw49zo000iytnns6igw1z1",
+      "content": "I started reading but Chapter 2 is really long. Can I finish tomorrow?",
+      "authorId": "cmlpw49xp0002ytnnrofj2pdh",
+      "authorName": "Emma Smith",
+      "authorRole": "STUDENT",
+      "assignmentId": "cmlpw49yu000dytnnry40mjtt",
+      "createdAt": "2026-02-17T00:54:00.849Z"
+    },
+    {
+      "id": "cmlpw49zo000jytnn3w4g2yo6",
+      "content": "Of course! Just make sure to write the summary for the chapters you've read so far.",
+      "authorId": "cmlpw49xj0001ytnnte3uw1g5",
+      "authorName": "Sarah Smith",
+      "authorRole": "PARENT",
+      "assignmentId": "cmlpw49yu000dytnnry40mjtt",
+      "createdAt": "2026-02-17T00:54:00.849Z"
+    },
+    {
+      "id": "cmlpw49zo000kytnng8vhd908",
+      "content": "Great work on this poster, Emma! The colors look wonderful.",
+      "authorId": "cmlpw49xj0001ytnnte3uw1g5",
+      "authorName": "Sarah Smith",
+      "authorRole": "PARENT",
+      "assignmentId": "cmlpw49z3000fytnnv6xkk2p5",
+      "createdAt": "2026-02-17T00:54:00.849Z"
+    },
+    {
+      "id": "cmlpw49zo000lytnnzs8fn443",
+      "content": "You need to redo questions 5-8. Remember to carry the ones when adding numbers over 10.",
+      "authorId": "cmlpw49xj0001ytnnte3uw1g5",
+      "authorName": "Sarah Smith",
+      "authorRole": "PARENT",
+      "assignmentId": "cmlpw49z7000gytnnnt4x73tl",
+      "createdAt": "2026-02-17T00:54:00.849Z"
+    }
+  ],
+  "activityLogs": [
+    {
+      "id": "cmlpw49zz000mytnnn17itojm",
+      "action": "CREATED",
+      "details": "Assignment \"Chapter 5: Fractions\" created",
+      "performedBy": "cmlpw49xj0001ytnnte3uw1g5",
+      "performedByName": "Sarah Smith",
+      "assignmentId": "cmlpw49yn000cytnn76q5whhn",
+      "createdAt": "2026-02-17T00:54:00.863Z"
+    },
+    {
+      "id": "cmlpw49zz000nytnn2yjzhoe7",
+      "action": "STATUS_CHANGED",
+      "details": "ASSIGNED → IN_PROGRESS",
+      "performedBy": "cmlpw49xj0001ytnnte3uw1g5",
+      "performedByName": "Emma",
+      "assignmentId": "cmlpw49yu000dytnnry40mjtt",
+      "createdAt": "2026-02-17T00:54:00.863Z"
+    },
+    {
+      "id": "cmlpw49zz000oytnnjqfz77bh",
+      "action": "STATUS_CHANGED",
+      "details": "IN_PROGRESS → SUBMITTED",
+      "performedBy": "cmlpw49xj0001ytnnte3uw1g5",
+      "performedByName": "Liam",
+      "assignmentId": "cmlpw49yz000eytnng6mp1fab",
+      "createdAt": "2026-02-17T00:54:00.863Z"
+    },
+    {
+      "id": "cmlpw49zz000pytnn66ikk8pv",
+      "action": "STATUS_CHANGED",
+      "details": "SUBMITTED → COMPLETED",
+      "performedBy": "cmlpw49xj0001ytnnte3uw1g5",
+      "performedByName": "Sarah Smith",
+      "assignmentId": "cmlpw49z3000fytnnv6xkk2p5",
+      "createdAt": "2026-02-17T00:54:00.863Z"
+    },
+    {
+      "id": "cmlpw49zz000qytnnb96k50xk",
+      "action": "STATUS_CHANGED",
+      "details": "SUBMITTED → RETURNED",
+      "performedBy": "cmlpw49xj0001ytnnte3uw1g5",
+      "performedByName": "Sarah Smith",
+      "assignmentId": "cmlpw49z7000gytnnnt4x73tl",
+      "createdAt": "2026-02-17T00:54:00.863Z"
+    },
+    {
+      "id": "cmlpw49zz000rytnneqsoeha6",
+      "action": "COMMENT_ADDED",
+      "details": "Comment added",
+      "performedBy": "cmlpw49xj0001ytnnte3uw1g5",
+      "performedByName": "Sarah Smith",
+      "assignmentId": "cmlpw49z3000fytnnv6xkk2p5",
+      "createdAt": "2026-02-17T00:54:00.863Z"
+    }
+  ],
+  "goals": [
+    {
+      "id": "cmlpw4a140011ytnn7mv6unp3",
+      "title": "Complete 5 math assignments",
+      "description": null,
+      "targetCount": 5,
+      "currentCount": 1,
+      "subjectId": "cmlpw49y40006ytnnihilbep5",
+      "studentId": "cmlpw49xw0004ytnnpycbg3zm",
+      "termStart": "2026-02-01T00:00:00.000Z",
+      "termEnd": "2026-02-28T00:00:00.000Z",
+      "familyId": "cmlpw49wp0000ytnn02a04x6j",
+      "createdAt": "2026-02-17T00:54:00.903Z",
+      "updatedAt": "2026-02-17T00:54:00.903Z"
+    },
+    {
+      "id": "cmlpw4a170012ytnn7s714trh",
+      "title": "Finish 3 reading assignments",
+      "description": null,
+      "targetCount": 3,
+      "currentCount": 0,
+      "subjectId": "cmlpw49y70007ytnnmo84fdxd",
+      "studentId": "cmlpw49y00005ytnnuzxw661s",
+      "termStart": "2026-02-01T00:00:00.000Z",
+      "termEnd": "2026-02-28T00:00:00.000Z",
+      "familyId": "cmlpw49wp0000ytnn02a04x6j",
+      "createdAt": "2026-02-17T00:54:00.907Z",
+      "updatedAt": "2026-02-17T00:54:00.907Z"
+    },
+    {
+      "id": "cmlpw4a1e0013ytnnt6boq8ln",
+      "title": "Complete 10 assignments total",
+      "description": null,
+      "targetCount": 10,
+      "currentCount": 1,
+      "subjectId": null,
+      "studentId": "cmlpw49xw0004ytnnpycbg3zm",
+      "termStart": "2026-02-01T00:00:00.000Z",
+      "termEnd": "2026-02-28T00:00:00.000Z",
+      "familyId": "cmlpw49wp0000ytnn02a04x6j",
+      "createdAt": "2026-02-17T00:54:00.914Z",
+      "updatedAt": "2026-02-17T00:54:00.914Z"
+    }
+  ],
+  "attendanceLogs": [
+    {
+      "id": "cmlpw4a0w000uytnnx1a0xhbr",
+      "date": "2026-02-16T00:54:00.814Z",
+      "hoursLogged": 2.5,
+      "subjectId": "cmlpw49y40006ytnnihilbep5",
+      "studentId": "cmlpw49xw0004ytnnpycbg3zm",
+      "familyId": "cmlpw49wp0000ytnn02a04x6j",
+      "notes": "Worked on fractions and decimals",
+      "createdAt": "2026-02-17T00:54:00.895Z"
+    },
+    {
+      "id": "cmlpw4a0w000vytnnearlvlxe",
+      "date": "2026-02-16T00:54:00.814Z",
+      "hoursLogged": 1.5,
+      "subjectId": "cmlpw49y70007ytnnmo84fdxd",
+      "studentId": "cmlpw49xw0004ytnnpycbg3zm",
+      "familyId": "cmlpw49wp0000ytnn02a04x6j",
+      "notes": "Reading Charlotte's Web",
+      "createdAt": "2026-02-17T00:54:00.895Z"
+    },
+    {
+      "id": "cmlpw4a0w000wytnnx8eo9895",
+      "date": "2026-02-16T00:54:00.814Z",
+      "hoursLogged": 2,
+      "subjectId": "cmlpw49y40006ytnnihilbep5",
+      "studentId": "cmlpw49y00005ytnnuzxw661s",
+      "familyId": "cmlpw49wp0000ytnn02a04x6j",
+      "notes": "Addition practice",
+      "createdAt": "2026-02-17T00:54:00.895Z"
+    },
+    {
+      "id": "cmlpw4a0w000xytnnrygto6pr",
+      "date": "2026-02-15T00:54:00.814Z",
+      "hoursLogged": 1,
+      "subjectId": "cmlpw49ya0008ytnne8r2n6k9",
+      "studentId": "cmlpw49xw0004ytnnpycbg3zm",
+      "familyId": "cmlpw49wp0000ytnn02a04x6j",
+      "notes": "Solar system poster work",
+      "createdAt": "2026-02-17T00:54:00.895Z"
+    },
+    {
+      "id": "cmlpw4a0w000yytnn3k1wobv3",
+      "date": "2026-02-15T00:54:00.814Z",
+      "hoursLogged": 1.5,
+      "subjectId": "cmlpw49y70007ytnnmo84fdxd",
+      "studentId": "cmlpw49y00005ytnnuzxw661s",
+      "familyId": "cmlpw49wp0000ytnn02a04x6j",
+      "notes": "Spelling practice",
+      "createdAt": "2026-02-17T00:54:00.895Z"
+    },
+    {
+      "id": "cmlpw4a0w000zytnnza34mwyh",
+      "date": "2026-02-14T00:54:00.814Z",
+      "hoursLogged": 2,
+      "subjectId": "cmlpw49y40006ytnnihilbep5",
+      "studentId": "cmlpw49xw0004ytnnpycbg3zm",
+      "familyId": "cmlpw49wp0000ytnn02a04x6j",
+      "notes": null,
+      "createdAt": "2026-02-17T00:54:00.895Z"
+    },
+    {
+      "id": "cmlpw4a0w0010ytnns6xdt2ap",
+      "date": "2026-02-13T00:54:00.814Z",
+      "hoursLogged": 1.5,
+      "subjectId": "cmlpw49y40006ytnnihilbep5",
+      "studentId": "cmlpw49y00005ytnnuzxw661s",
+      "familyId": "cmlpw49wp0000ytnn02a04x6j",
+      "notes": null,
+      "createdAt": "2026-02-17T00:54:00.895Z"
+    }
+  ],
+  "notifications": []
+}
