@@ -18,8 +18,16 @@ A Next.js 16 homeschooling management application that helps parents organize as
 - `lib/` - Utilities, auth config, DB client, actions, validations
 - `prisma/` - Prisma schema and seed files
 
+## Database
+- Development and production use **separate** Replit-managed PostgreSQL databases
+- Development: `heliumdb` (accessed via runtime DATABASE_URL)
+- Production: `neondb` (Replit-provisioned, separate instance)
+- Schema managed via Prisma (`npx prisma db push`)
+- Seed data via `npx prisma db seed` (defined in `prisma/seed.ts`)
+- Build step includes `prisma db push` and `prisma db seed` to sync production schema and data on deploy
+
 ## Environment Variables
-- `DATABASE_URL` - PostgreSQL connection string (auto-configured)
+- `DATABASE_URL` - PostgreSQL connection string (auto-configured by Replit, separate for dev/prod)
 - `AUTH_SECRET` - NextAuth secret key
 - `AUTH_URL` - Set in development to the Replit dev domain (HTTPS)
 
@@ -31,10 +39,11 @@ A Next.js 16 homeschooling management application that helps parents organize as
 
 ## Development
 - Dev server runs on port 5000 (bound to 0.0.0.0)
-- Database schema managed via Prisma (`npx prisma db push`)
 - `allowedDevOrigins` configured in `next.config.ts` for Replit domains
 
 ## Recent Changes
+- 2026-02-17: Documented separate dev/prod databases; added seed to deploy build step
+- 2026-02-17: Removed stale external DATABASE_URL secret (was pointing to old neon.tech)
 - 2026-02-17: Fixed auth cookie issue — set `useSecureCookies: false` for Replit proxy compatibility
 - 2026-02-17: Fixed login/signup redirects with router.push fallback navigation
 - 2026-02-17: Converted login/signup to server actions to bypass CSRF proxy issues
