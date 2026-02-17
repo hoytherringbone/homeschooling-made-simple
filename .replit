@@ -14,7 +14,6 @@ AUTH_SECRET = "hoUP6T9X7S9mp7hI8qwbywpHJ20GzUijusWk2jgcZEE="
 AUTH_URL = "https://8d4e9df4-68c9-480a-bcc7-d296844668fb-00-2wsho2cyi1vu5.spock.replit.dev"
 
 [userenv.production]
-SEED_ON_DEPLOY = "true"
 
 [workflows]
 runButton = "Project"
