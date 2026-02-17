@@ -17,6 +17,8 @@ import {
   LogOut,
   Menu,
   X,
+  Home,
+  GraduationCap,
 } from "lucide-react";
 import { Logo } from "@/components/logo";
 import { useState } from "react";
@@ -35,6 +37,10 @@ const parentNav = [
 
 const adminNav = [
   { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+  { label: "Families", href: "/admin/families", icon: Home },
+  { label: "Parents", href: "/admin/parents", icon: Users },
+  { label: "Students", href: "/admin/students", icon: GraduationCap },
+  { label: "Assignments", href: "/admin/assignments", icon: ClipboardList },
   { label: "Settings", href: "/settings", icon: Settings },
 ];
 

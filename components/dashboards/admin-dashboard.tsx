@@ -1,5 +1,6 @@
 import { db } from "@/lib/db";
 import { PageHeader } from "@/components/page-header";
+import Link from "next/link";
 import {
   Users,
   GraduationCap,
@@ -7,6 +8,7 @@ import {
   ClipboardCheck,
   Home,
   TrendingUp,
+  ChevronRight,
 } from "lucide-react";
 
 interface AdminDashboardProps {
@@ -60,6 +62,7 @@ export async function AdminDashboard({ user }: AdminDashboardProps) {
       icon: Home,
       color: "text-teal-600",
       bg: "bg-teal-50",
+      href: "/admin/families",
     },
     {
       label: "Parents",
@@ -67,6 +70,7 @@ export async function AdminDashboard({ user }: AdminDashboardProps) {
       icon: Users,
       color: "text-blue-600",
       bg: "bg-blue-50",
+      href: "/admin/parents",
     },
     {
       label: "Students",
@@ -74,6 +78,7 @@ export async function AdminDashboard({ user }: AdminDashboardProps) {
       icon: GraduationCap,
       color: "text-violet-600",
       bg: "bg-violet-50",
+      href: "/admin/students",
     },
     {
       label: "Total Assignments",
@@ -81,6 +86,7 @@ export async function AdminDashboard({ user }: AdminDashboardProps) {
       icon: BookOpen,
       color: "text-amber-600",
       bg: "bg-amber-50",
+      href: "/admin/assignments",
     },
     {
       label: "Completed",
@@ -88,6 +94,7 @@ export async function AdminDashboard({ user }: AdminDashboardProps) {
       icon: ClipboardCheck,
       color: "text-emerald-600",
       bg: "bg-emerald-50",
+      href: "/admin/assignments?status=COMPLETED",
     },
     {
       label: "Active",
@@ -95,6 +102,7 @@ export async function AdminDashboard({ user }: AdminDashboardProps) {
       icon: TrendingUp,
       color: "text-rose-600",
       bg: "bg-rose-50",
+      href: "/admin/assignments?status=ASSIGNED,IN_PROGRESS,SUBMITTED,RETURNED",
     },
   ];
 
@@ -106,33 +114,44 @@ export async function AdminDashboard({ user }: AdminDashboardProps) {
       />
 
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
-        {stats.map((stat) => (
-          <div
-            key={stat.label}
-            className="bg-white rounded-2xl border border-[#EDE9E3] p-4"
-          >
-            <div className={`${stat.bg} w-10 h-10 rounded-xl flex items-center justify-center mb-3`}>
-              <stat.icon className={`w-5 h-5 ${stat.color}`} />
+        {stats.map((stat) => {
+          const content = (
+            <div
+              className={`bg-white rounded-2xl border border-[#EDE9E3] p-4 ${stat.href ? "hover:border-teal-200 hover:shadow-sm transition-all cursor-pointer" : ""}`}
+            >
+              <div className={`${stat.bg} w-10 h-10 rounded-xl flex items-center justify-center mb-3`}>
+                <stat.icon className={`w-5 h-5 ${stat.color}`} />
+              </div>
+              <p className="text-2xl font-bold text-slate-900">{stat.value}</p>
+              <p className="text-xs text-slate-500 mt-0.5">{stat.label}</p>
             </div>
-            <p className="text-2xl font-bold text-slate-900">{stat.value}</p>
-            <p className="text-xs text-slate-500 mt-0.5">{stat.label}</p>
-          </div>
-        ))}
+          );
+          return stat.href ? (
+            <Link key={stat.label} href={stat.href}>
+              {content}
+            </Link>
+          ) : (
+            <div key={stat.label}>{content}</div>
+          );
+        })}
       </div>
 
       <div className="grid md:grid-cols-2 gap-6">
         <div className="bg-white rounded-2xl border border-[#EDE9E3] p-6">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-semibold text-slate-900">All Families</h2>
-            <span className="text-xs text-slate-400">{families.filter((f) => f.name !== "HSMS Administration").length} total</span>
+            <Link href="/admin/families" className="text-xs text-teal-600 hover:text-teal-700 font-medium">
+              View All →
+            </Link>
           </div>
           <div className="space-y-3 max-h-96 overflow-y-auto">
             {families
               .filter((f) => f.name !== "HSMS Administration")
               .map((family) => (
-                <div
+                <Link
                   key={family.id}
-                  className="flex items-center justify-between p-3 rounded-xl bg-slate-50 hover:bg-slate-100 transition-colors"
+                  href={`/admin/families/${family.id}`}
+                  className="flex items-center justify-between p-3 rounded-xl bg-slate-50 hover:bg-slate-100 transition-colors cursor-pointer"
                 >
                   <div>
                     <p className="font-medium text-slate-900">{family.name}</p>
@@ -140,18 +159,21 @@ export async function AdminDashboard({ user }: AdminDashboardProps) {
                       {family._count.users} user{family._count.users !== 1 ? "s" : ""} · {family._count.students} student{family._count.students !== 1 ? "s" : ""} · {family._count.assignments} assignment{family._count.assignments !== 1 ? "s" : ""}
                     </p>
                   </div>
-                  <span
-                    className={`text-xs px-2 py-1 rounded-full font-medium ${
-                      family.subscriptionStatus === "active"
-                        ? "bg-emerald-50 text-emerald-700"
-                        : family.subscriptionStatus === "trial"
-                          ? "bg-blue-50 text-blue-700"
-                          : "bg-slate-100 text-slate-600"
-                    }`}
-                  >
-                    {family.subscriptionStatus}
-                  </span>
-                </div>
+                  <div className="flex items-center gap-2">
+                    <span
+                      className={`text-xs px-2 py-1 rounded-full font-medium ${
+                        family.subscriptionStatus === "active"
+                          ? "bg-emerald-50 text-emerald-700"
+                          : family.subscriptionStatus === "trial"
+                            ? "bg-blue-50 text-blue-700"
+                            : "bg-slate-100 text-slate-600"
+                      }`}
+                    >
+                      {family.subscriptionStatus}
+                    </span>
+                    <ChevronRight className="w-4 h-4 text-slate-400" />
+                  </div>
+                </Link>
               ))}
             {families.filter((f) => f.name !== "HSMS Administration").length === 0 && (
               <p className="text-sm text-slate-400 text-center py-4">No families registered yet.</p>
@@ -162,20 +184,26 @@ export async function AdminDashboard({ user }: AdminDashboardProps) {
         <div className="bg-white rounded-2xl border border-[#EDE9E3] p-6">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-semibold text-slate-900">All Parents</h2>
-            <span className="text-xs text-slate-400">{parentUsers.length} total</span>
+            <Link href="/admin/parents" className="text-xs text-teal-600 hover:text-teal-700 font-medium">
+              View All →
+            </Link>
           </div>
           <div className="space-y-3 max-h-96 overflow-y-auto">
             {parentUsers.map((parent) => (
-              <div
+              <Link
                 key={parent.id}
-                className="flex items-center justify-between p-3 rounded-xl bg-slate-50 hover:bg-slate-100 transition-colors"
+                href={`/admin/parents/${parent.id}`}
+                className="flex items-center justify-between p-3 rounded-xl bg-slate-50 hover:bg-slate-100 transition-colors cursor-pointer"
               >
                 <div>
                   <p className="font-medium text-slate-900">{parent.name}</p>
                   <p className="text-xs text-slate-500">{parent.email}</p>
                 </div>
-                <span className="text-xs text-slate-400">{parent.family.name}</span>
-              </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-slate-400">{parent.family.name}</span>
+                  <ChevronRight className="w-4 h-4 text-slate-400" />
+                </div>
+              </Link>
             ))}
             {parentUsers.length === 0 && (
               <p className="text-sm text-slate-400 text-center py-4">No parents registered yet.</p>
@@ -186,13 +214,16 @@ export async function AdminDashboard({ user }: AdminDashboardProps) {
         <div className="bg-white rounded-2xl border border-[#EDE9E3] p-6 md:col-span-2">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-semibold text-slate-900">All Students</h2>
-            <span className="text-xs text-slate-400">{allStudents.length} total</span>
+            <Link href="/admin/students" className="text-xs text-teal-600 hover:text-teal-700 font-medium">
+              View All →
+            </Link>
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3 max-h-96 overflow-y-auto">
             {allStudents.map((student) => (
-              <div
+              <Link
                 key={student.id}
-                className="flex items-center justify-between p-3 rounded-xl bg-slate-50 hover:bg-slate-100 transition-colors"
+                href={`/admin/students/${student.id}`}
+                className="flex items-center justify-between p-3 rounded-xl bg-slate-50 hover:bg-slate-100 transition-colors cursor-pointer"
               >
                 <div>
                   <p className="font-medium text-slate-900">{student.name}</p>
@@ -200,10 +231,13 @@ export async function AdminDashboard({ user }: AdminDashboardProps) {
                     {student.gradeLevel || "No grade"} · {student.family.name}
                   </p>
                 </div>
-                <span className="text-xs text-slate-400">
-                  {student._count.assignments} assignment{student._count.assignments !== 1 ? "s" : ""}
-                </span>
-              </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-slate-400">
+                    {student._count.assignments} assignment{student._count.assignments !== 1 ? "s" : ""}
+                  </span>
+                  <ChevronRight className="w-4 h-4 text-slate-400" />
+                </div>
+              </Link>
             ))}
             {allStudents.length === 0 && (
               <p className="text-sm text-slate-400 text-center py-4 col-span-full">No students registered yet.</p>
