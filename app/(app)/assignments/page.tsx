@@ -7,7 +7,7 @@ import { AssignmentCard } from "@/components/assignments/assignment-card";
 import { AssignmentFilters } from "@/components/assignments/assignment-filters";
 
 interface PageProps {
-  searchParams: Promise<{ student?: string; subject?: string; status?: string; overdue?: string }>;
+  searchParams: Promise<{ student?: string; subject?: string; status?: string | string[]; overdue?: string }>;
 }
 
 export default async function AssignmentsPage({ searchParams }: PageProps) {
@@ -41,7 +41,12 @@ export default async function AssignmentsPage({ searchParams }: PageProps) {
     where.dueDate = { lt: new Date() };
     where.status = { not: "COMPLETED" };
   } else if (params.status) {
-    where.status = params.status;
+    const statusValue = params.status;
+    if (Array.isArray(statusValue)) {
+      where.status = { in: statusValue };
+    } else {
+      where.status = statusValue;
+    }
   }
 
   const [assignments, students, subjects] = await Promise.all([
