@@ -14,9 +14,6 @@ AUTH_SECRET = "hoUP6T9X7S9mp7hI8qwbywpHJ20GzUijusWk2jgcZEE="
 AUTH_URL = "https://8d4e9df4-68c9-480a-bcc7-d296844668fb-00-2wsho2cyi1vu5.spock.replit.dev"
 
 [userenv.production]
-ADMIN_EMAIL = "brandonplowe@gmail.com"
-ADMIN_PASSWORD = "HSMSmatthew1028"
-ADMIN_NAME = "Brandon Plowe"
 
 [workflows]
 runButton = "Project"
@@ -49,5 +46,5 @@ externalPort = 80
 [deployment]
 deploymentTarget = "autoscale"
 run = ["npm", "run", "start"]
-build = ["bash", "-c", "npx prisma generate && npx prisma db push && npx tsx scripts/import-data.ts && npx next build"]
+build = ["bash", "-c", "npx prisma generate && npx prisma db push && npx next build"]
 publicDir = "public"
