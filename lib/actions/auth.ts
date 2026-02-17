@@ -3,8 +3,32 @@
 import { db } from "@/lib/db";
 import { signIn } from "@/lib/auth";
 import bcrypt from "bcryptjs";
-import { signupSchema } from "@/lib/validations/auth";
+import { signupSchema, loginSchema } from "@/lib/validations/auth";
 import { z } from "zod";
+import { AuthError } from "next-auth";
+
+export async function login(values: z.infer<typeof loginSchema>) {
+  const parsed = loginSchema.safeParse(values);
+  if (!parsed.success) {
+    return { error: "Invalid fields" };
+  }
+
+  try {
+    await signIn("credentials", {
+      email: parsed.data.email,
+      password: parsed.data.password,
+      redirectTo: "/dashboard",
+    });
+  } catch (error) {
+    if (error instanceof AuthError) {
+      if (error.type === "CredentialsSignin") {
+        return { error: "Invalid email or password" };
+      }
+      return { error: "Something went wrong" };
+    }
+    throw error;
+  }
+}
 
 export async function signup(values: z.infer<typeof signupSchema>) {
   const parsed = signupSchema.safeParse(values);
