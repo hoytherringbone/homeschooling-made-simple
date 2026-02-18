@@ -84,8 +84,27 @@ export function StatusActions({ assignmentId, currentStatus, userRole }: StatusA
     });
   };
 
-  // Parent/admin viewing a completed assignment: show grade dropdown + approve + return
+  // Parent/admin viewing a completed assignment: show grade dropdown + return
   const isParentCompleting = allowedStatuses.includes("COMPLETED") && (userRole === "PARENT" || userRole === "SUPER_ADMIN");
+
+  const handleGradeChange = (label: string) => {
+    setGradeLabel(label);
+    if (!label) return;
+    const selectedGrade = LETTER_GRADES.find((g) => g.label === label);
+    startTransition(async () => {
+      const result = await updateAssignmentStatus({
+        assignmentId,
+        newStatus: "COMPLETED",
+        gradeLabel: label,
+        gradeValue: selectedGrade?.value ?? undefined,
+      });
+      if (result.error) {
+        toast.error(result.error);
+      } else {
+        toast.success(`Grade saved: ${label}`);
+      }
+    });
+  };
 
   return (
     <div className="space-y-3">
@@ -95,8 +114,9 @@ export function StatusActions({ assignmentId, currentStatus, userRole }: StatusA
             <label className="text-sm font-medium text-slate-600">Grade:</label>
             <select
               value={gradeLabel}
-              onChange={(e) => setGradeLabel(e.target.value)}
-              className="rounded-full border border-[#EDE9E3] bg-white pl-4 pr-8 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-teal-300 focus:border-teal-300 transition-all"
+              onChange={(e) => handleGradeChange(e.target.value)}
+              disabled={isPending}
+              className="rounded-full border border-[#EDE9E3] bg-white pl-4 pr-10 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-teal-300 focus:border-teal-300 transition-all disabled:opacity-50"
             >
               <option value="">No grade</option>
               {LETTER_GRADES.map((g) => (
@@ -105,13 +125,6 @@ export function StatusActions({ assignmentId, currentStatus, userRole }: StatusA
                 </option>
               ))}
             </select>
-            <button
-              onClick={() => handleTransition("COMPLETED")}
-              disabled={isPending}
-              className="px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 disabled:opacity-50 bg-green-600 hover:bg-green-700 text-white"
-            >
-              {isPending ? "Updating..." : "Mark Complete"}
-            </button>
             <button
               onClick={() => handleTransition("ASSIGNED")}
               disabled={isPending}
