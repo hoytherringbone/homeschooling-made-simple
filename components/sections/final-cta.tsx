@@ -21,7 +21,7 @@ export function FinalCTASection() {
 
         <ScrollReveal delay={0.2}>
           <a
-            href="#"
+            href="/signup"
             className="inline-block bg-white text-teal-700 hover:bg-teal-50 rounded-full px-8 py-3.5 text-base font-medium transition-all duration-200 active:scale-[0.98]"
           >
             Start Your Free Trial — It&apos;s Free for 14 Days

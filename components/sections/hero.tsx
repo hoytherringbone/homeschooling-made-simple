@@ -43,7 +43,7 @@ export function HeroSection() {
         <ScrollReveal delay={0.3}>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-4">
             <a
-              href="#"
+              href="/signup"
               className="bg-teal-600 hover:bg-teal-700 text-white rounded-full px-8 py-3.5 text-base font-medium transition-all duration-200 active:scale-[0.98] w-full sm:w-auto"
             >
               Start Your Free Trial

@@ -55,7 +55,7 @@ export function HowItWorksSection() {
         <ScrollReveal delay={0.4}>
           <div className="text-center mt-14">
             <a
-              href="#"
+              href="/signup"
               className="bg-teal-600 hover:bg-teal-700 text-white rounded-full px-8 py-3.5 text-base font-medium transition-all duration-200 active:scale-[0.98] inline-block"
             >
               Start Your Free Trial

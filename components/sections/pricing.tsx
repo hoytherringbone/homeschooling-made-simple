@@ -96,7 +96,7 @@ export function PricingSection() {
                 </ul>
 
                 <a
-                  href="#"
+                  href="/signup"
                   className={`block text-center rounded-full px-6 py-3 text-sm font-medium transition-all duration-200 active:scale-[0.98] ${
                     plan.highlighted
                       ? "bg-teal-600 hover:bg-teal-700 text-white"
