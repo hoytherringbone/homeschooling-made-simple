@@ -8,6 +8,7 @@ import { StatusActions } from "@/components/assignments/status-actions";
 import { CommentThread } from "@/components/assignments/comment-thread";
 import { CommentForm } from "@/components/assignments/comment-form";
 import { DeleteAssignmentButton } from "@/components/assignments/delete-assignment-button";
+import { EditAssignmentWrapper } from "@/components/assignments/edit-assignment-wrapper";
 import { PRIORITY_COLORS } from "@/lib/constants";
 
 interface PageProps {
@@ -20,14 +21,28 @@ export default async function AssignmentDetailPage({ params }: PageProps) {
 
   const { id } = await params;
 
-  const assignment = await db.assignment.findFirst({
-    where: { id, familyId: session.user.familyId },
-    include: {
-      student: { select: { id: true, name: true, gradeLevel: true } },
-      subject: { select: { name: true, color: true } },
-      comments: { orderBy: { createdAt: "asc" } },
-    },
-  });
+  const familyId = session.user.familyId;
+
+  const [assignment, students, subjects] = await Promise.all([
+    db.assignment.findFirst({
+      where: { id, familyId },
+      include: {
+        student: { select: { id: true, name: true, gradeLevel: true } },
+        subject: { select: { id: true, name: true, color: true } },
+        comments: { orderBy: { createdAt: "asc" } },
+      },
+    }),
+    db.student.findMany({
+      where: { familyId },
+      select: { id: true, name: true },
+      orderBy: { name: "asc" },
+    }),
+    db.subject.findMany({
+      where: { familyId },
+      select: { id: true, name: true },
+      orderBy: { name: "asc" },
+    }),
+  ]);
 
   if (!assignment) notFound();
 
@@ -173,11 +188,28 @@ export default async function AssignmentDetailPage({ params }: PageProps) {
         </div>
       </div>
 
-      {/* Delete (parent only) */}
+      {/* Edit + Delete (parent only) */}
       {isParent && (
-        <div className="flex justify-end">
-          <DeleteAssignmentButton assignmentId={assignment.id} />
-        </div>
+        <>
+          <EditAssignmentWrapper
+            assignment={{
+              id: assignment.id,
+              title: assignment.title,
+              description: assignment.description,
+              studentId: assignment.studentId,
+              subjectId: assignment.subjectId,
+              category: assignment.category,
+              priority: assignment.priority,
+              dueDate: assignment.dueDate,
+              estimatedMinutes: assignment.estimatedMinutes,
+            }}
+            students={students}
+            subjects={subjects}
+          />
+          <div className="flex justify-end">
+            <DeleteAssignmentButton assignmentId={assignment.id} />
+          </div>
+        </>
       )}
     </div>
   );

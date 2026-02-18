@@ -8,10 +8,12 @@ import { recalculateGoalsForAssignment } from "@/lib/actions/goals";
 import { createNotification, createNotifications } from "@/lib/notifications";
 import {
   createAssignmentSchema,
+  updateAssignmentSchema,
   statusTransitionSchema,
   createCommentSchema,
   importRowSchema,
   type CreateAssignmentValues,
+  type UpdateAssignmentValues,
   type StatusTransitionValues,
   type CreateCommentValues,
   type ImportRowValues,
@@ -109,6 +111,74 @@ export async function createAssignment(values: CreateAssignmentValues) {
   revalidatePath("/notifications");
 
   return { success: true, count: assignments.length };
+}
+
+export async function updateAssignment(values: UpdateAssignmentValues) {
+  const session = await auth();
+  if (!session?.user?.id || !session.user.familyId) {
+    return { error: "Not authenticated" };
+  }
+  if (session.user.role !== "PARENT" && session.user.role !== "SUPER_ADMIN") {
+    return { error: "Only parents can edit assignments" };
+  }
+
+  const parsed = updateAssignmentSchema.safeParse(values);
+  if (!parsed.success) {
+    return { error: parsed.error.issues[0]?.message || "Invalid data" };
+  }
+
+  const { assignmentId, title, description, studentId, subjectId, category, priority, dueDate, estimatedMinutes } = parsed.data;
+  const familyId = session.user.familyId;
+
+  // Verify assignment belongs to this family
+  const assignment = await db.assignment.findFirst({
+    where: { id: assignmentId, familyId },
+  });
+  if (!assignment) return { error: "Assignment not found" };
+
+  // Verify student belongs to this family
+  const student = await db.student.findFirst({
+    where: { id: studentId, familyId },
+  });
+  if (!student) return { error: "Invalid student" };
+
+  // Verify subject belongs to this family (if provided)
+  if (subjectId) {
+    const subject = await db.subject.findFirst({
+      where: { id: subjectId, familyId },
+    });
+    if (!subject) return { error: "Invalid subject" };
+  }
+
+  await db.assignment.update({
+    where: { id: assignmentId },
+    data: {
+      title,
+      description: description || null,
+      studentId,
+      subjectId: subjectId || null,
+      category: category || null,
+      priority,
+      dueDate: dueDate ? new Date(dueDate) : null,
+      estimatedMinutes: estimatedMinutes || null,
+    },
+  });
+
+  await db.activityLog.create({
+    data: {
+      action: "UPDATED",
+      details: `Assignment "${title}" updated`,
+      performedBy: session.user.id,
+      performedByName: session.user.name || "Unknown",
+      assignmentId,
+    },
+  });
+
+  revalidatePath("/assignments");
+  revalidatePath(`/assignments/${assignmentId}`);
+  revalidatePath("/dashboard");
+
+  return { success: true };
 }
 
 export async function updateAssignmentStatus(values: StatusTransitionValues) {

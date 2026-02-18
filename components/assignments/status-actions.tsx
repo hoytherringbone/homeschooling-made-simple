@@ -84,8 +84,9 @@ export function StatusActions({ assignmentId, currentStatus, userRole }: StatusA
     });
   };
 
-  // Parent/admin viewing a completed assignment: show grade dropdown + return
-  const isParentCompleting = allowedStatuses.includes("COMPLETED") && (userRole === "PARENT" || userRole === "SUPER_ADMIN");
+  const isParent = userRole === "PARENT" || userRole === "SUPER_ADMIN";
+  const isParentOnCompleted = currentStatus === "COMPLETED" && isParent;
+  const isParentOnAssigned = currentStatus === "ASSIGNED" && isParent;
 
   const handleGradeChange = (label: string) => {
     setGradeLabel(label);
@@ -109,7 +110,15 @@ export function StatusActions({ assignmentId, currentStatus, userRole }: StatusA
   return (
     <div className="space-y-3">
       <div className="flex items-center gap-2 flex-wrap">
-        {isParentCompleting ? (
+        {isParentOnAssigned ? (
+          <button
+            onClick={() => handleTransition("COMPLETED")}
+            disabled={isPending}
+            className="px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 disabled:opacity-50 bg-green-600 hover:bg-green-700 text-white"
+          >
+            {isPending ? "Updating..." : "Mark Complete"}
+          </button>
+        ) : isParentOnCompleted ? (
           <>
             <label className="text-sm font-medium text-slate-600">Grade:</label>
             <select

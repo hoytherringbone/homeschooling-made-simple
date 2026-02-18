@@ -40,7 +40,20 @@ export const importRowSchema = z.object({
   estimatedMinutes: z.coerce.number().min(1).max(480).optional(),
 });
 
+export const updateAssignmentSchema = z.object({
+  assignmentId: z.string().min(1),
+  title: z.string().min(1, "Title is required").max(200),
+  description: z.string().max(2000).optional(),
+  studentId: z.string().min(1, "Student is required"),
+  subjectId: z.string().optional(),
+  category: z.enum(["TEST", "QUIZ", "HOMEWORK", "PROJECT"]).optional(),
+  priority: z.enum(["LOW", "MEDIUM", "HIGH"]).default("MEDIUM"),
+  dueDate: z.string().optional(),
+  estimatedMinutes: z.coerce.number().min(1).max(480).optional(),
+});
+
 export type CreateAssignmentValues = z.infer<typeof createAssignmentSchema>;
+export type UpdateAssignmentValues = z.infer<typeof updateAssignmentSchema>;
 export type StatusTransitionValues = z.infer<typeof statusTransitionSchema>;
 export type CreateCommentValues = z.infer<typeof createCommentSchema>;
 export type ImportRowValues = z.infer<typeof importRowSchema>;
