@@ -122,6 +122,7 @@ export default async function StudentDetailPage({ params }: PageProps) {
                 key={assignment.id}
                 assignment={assignment}
                 showStudent={false}
+                backPath={`/students/${id}`}
               />
             ))}
           </div>

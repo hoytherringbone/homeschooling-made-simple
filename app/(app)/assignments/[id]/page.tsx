@@ -13,13 +13,17 @@ import { PRIORITY_COLORS } from "@/lib/constants";
 
 interface PageProps {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ from?: string }>;
 }
 
-export default async function AssignmentDetailPage({ params }: PageProps) {
+export default async function AssignmentDetailPage({ params, searchParams }: PageProps) {
   const session = await auth();
   if (!session?.user?.id || !session.user.familyId) redirect("/login");
 
   const { id } = await params;
+  const { from: backTo } = await searchParams;
+  const backHref = backTo || "/assignments";
+  const backLabel = backTo?.startsWith("/students") ? "Back to student" : "Back to assignments";
 
   const familyId = session.user.familyId;
 
@@ -72,11 +76,11 @@ export default async function AssignmentDetailPage({ params }: PageProps) {
     <div className="space-y-6 max-w-3xl">
       {/* Back link */}
       <Link
-        href="/assignments"
+        href={backHref}
         className="inline-flex items-center gap-1.5 text-sm text-slate-500 hover:text-slate-700 transition-colors"
       >
         <ArrowLeft className="w-4 h-4" />
-        Back to assignments
+        {backLabel}
       </Link>
 
       {/* Header card */}

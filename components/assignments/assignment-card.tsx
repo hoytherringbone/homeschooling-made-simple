@@ -1,7 +1,9 @@
 import Link from "next/link";
 import { StatusBadge } from "@/components/status-badge";
 import { Clock, AlertCircle } from "lucide-react";
-import { PRIORITY_COLORS } from "@/lib/constants";
+import { PRIORITY_COLORS, ASSIGNMENT_CATEGORIES } from "@/lib/constants";
+
+const categoryLabels = Object.fromEntries(ASSIGNMENT_CATEGORIES.map((c) => [c.value, c.label]));
 
 interface AssignmentCardProps {
   assignment: {
@@ -12,13 +14,15 @@ interface AssignmentCardProps {
     dueDate: Date | null;
     estimatedMinutes: number | null;
     gradeLabel?: string | null;
+    category?: string | null;
     student: { id: string; name: string } | null;
     subject: { name: string; color: string | null } | null;
   };
   showStudent?: boolean;
+  backPath?: string;
 }
 
-export function AssignmentCard({ assignment, showStudent = true }: AssignmentCardProps) {
+export function AssignmentCard({ assignment, showStudent = true, backPath }: AssignmentCardProps) {
   const isOverdue =
     assignment.dueDate &&
     new Date(assignment.dueDate) < new Date() &&
@@ -35,7 +39,7 @@ export function AssignmentCard({ assignment, showStudent = true }: AssignmentCar
     PRIORITY_COLORS[assignment.priority as keyof typeof PRIORITY_COLORS];
 
   return (
-    <Link href={`/assignments/${assignment.id}`}>
+    <Link href={`/assignments/${assignment.id}${backPath ? `?from=${encodeURIComponent(backPath)}` : ""}`}>
       <div className="bg-white rounded-2xl border border-[#EDE9E3] p-4 hover:shadow-sm hover:border-teal-200 transition-all duration-200 cursor-pointer">
         <div className="flex items-start gap-3">
           {assignment.subject && (
@@ -64,6 +68,14 @@ export function AssignmentCard({ assignment, showStudent = true }: AssignmentCar
                 <span className="text-xs text-slate-500">
                   {assignment.subject.name}
                 </span>
+              )}
+              {assignment.category && (
+                <>
+                  <span className="text-slate-300">·</span>
+                  <span className="text-xs px-1.5 py-0.5 rounded bg-indigo-50 text-indigo-600">
+                    {categoryLabels[assignment.category] || assignment.category}
+                  </span>
+                </>
               )}
               {dueLabel && (
                 <>
