@@ -96,7 +96,7 @@ export function StatusActions({ assignmentId, currentStatus, userRole }: StatusA
             <select
               value={gradeLabel}
               onChange={(e) => setGradeLabel(e.target.value)}
-              className="rounded-full border border-[#EDE9E3] bg-white px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-teal-300 focus:border-teal-300 transition-all"
+              className="rounded-full border border-[#EDE9E3] bg-white pl-4 pr-8 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-teal-300 focus:border-teal-300 transition-all"
             >
               <option value="">No grade</option>
               {LETTER_GRADES.map((g) => (
@@ -110,7 +110,7 @@ export function StatusActions({ assignmentId, currentStatus, userRole }: StatusA
               disabled={isPending}
               className="px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 disabled:opacity-50 bg-green-600 hover:bg-green-700 text-white"
             >
-              {isPending ? "Updating..." : "Approve"}
+              {isPending ? "Updating..." : "Mark Complete"}
             </button>
             <button
               onClick={() => handleTransition("ASSIGNED")}
