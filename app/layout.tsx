@@ -11,8 +11,9 @@ const plusJakarta = Plus_Jakarta_Sans({
   weight: ["400", "500", "600"],
 });
 
-const domain = process.env.REPLIT_DOMAINS?.split(",")[0] || process.env.REPLIT_DEV_DOMAIN || "localhost:5000";
-const baseUrl = domain.includes("localhost") ? `http://${domain}` : `https://${domain}`;
+const baseUrl = process.env.NODE_ENV === "production"
+  ? "https://hsms.replit.app"
+  : "http://localhost:3000";
 
 export const metadata: Metadata = {
   metadataBase: new URL(baseUrl),
