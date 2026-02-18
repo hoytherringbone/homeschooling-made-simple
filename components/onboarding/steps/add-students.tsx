@@ -104,37 +104,37 @@ export function AddStudentsStep({ familyId, onComplete }: AddStudentsStepProps) 
       <div className="space-y-4 mb-6">
         {students.map((student, i) => (
           <div key={i} className="space-y-2">
-            <div className="flex gap-3 items-start">
-              <div className="flex-1">
-                <input
-                  type="text"
-                  value={student.name}
-                  onChange={(e) => updateStudent(i, "name", e.target.value)}
-                  placeholder="Student name"
-                  className={inputClass}
-                />
-              </div>
-              <div className="w-36">
-                <select
-                  value={student.gradeLevel}
-                  onChange={(e) => updateStudent(i, "gradeLevel", e.target.value)}
-                  className="w-full rounded-xl border border-[#EDE9E3] bg-white px-3 py-2.5 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-teal-600/20 focus:border-teal-600 transition-all appearance-none"
+            <div className="space-y-2">
+              <input
+                type="text"
+                value={student.name}
+                onChange={(e) => updateStudent(i, "name", e.target.value)}
+                placeholder="Student name"
+                className={inputClass}
+              />
+              <div className="flex gap-3 items-start">
+                <div className="flex-1">
+                  <select
+                    value={student.gradeLevel}
+                    onChange={(e) => updateStudent(i, "gradeLevel", e.target.value)}
+                    className="w-full rounded-xl border border-[#EDE9E3] bg-white px-3 py-2.5 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-teal-600/20 focus:border-teal-600 transition-all appearance-none"
+                  >
+                    <option value="">Grade</option>
+                    {GRADE_LEVELS.map((grade) => (
+                      <option key={grade} value={grade}>
+                        {grade}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <button
+                  onClick={() => removeStudent(i)}
+                  disabled={students.length <= 1}
+                  className="p-2.5 rounded-xl text-slate-400 hover:text-rose-500 hover:bg-rose-50 disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-slate-400 transition-colors"
                 >
-                  <option value="">Grade</option>
-                  {GRADE_LEVELS.map((grade) => (
-                    <option key={grade} value={grade}>
-                      {grade}
-                    </option>
-                  ))}
-                </select>
+                  <Trash2 className="w-4 h-4" />
+                </button>
               </div>
-              <button
-                onClick={() => removeStudent(i)}
-                disabled={students.length <= 1}
-                className="p-2.5 rounded-xl text-slate-400 hover:text-rose-500 hover:bg-rose-50 disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-slate-400 transition-colors"
-              >
-                <Trash2 className="w-4 h-4" />
-              </button>
             </div>
             <div className="pl-1">
               <label className="flex items-center gap-2 text-sm text-slate-600 cursor-pointer">
