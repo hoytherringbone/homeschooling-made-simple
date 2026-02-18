@@ -11,8 +11,11 @@ const plusJakarta = Plus_Jakarta_Sans({
   weight: ["400", "500", "600"],
 });
 
+const domain = process.env.REPLIT_DOMAINS?.split(",")[0] || process.env.REPLIT_DEV_DOMAIN || "localhost:5000";
+const baseUrl = domain.includes("localhost") ? `http://${domain}` : `https://${domain}`;
+
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.AUTH_URL || "https://homeschooling-made-simple.replit.app"),
+  metadataBase: new URL(baseUrl),
   title: "Home Schooling Made Simple — Organize Your Homeschool",
   description:
     "One calm, organized place to assign work, track progress, and generate reports. Built for homeschooling families.",
