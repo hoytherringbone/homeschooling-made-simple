@@ -6,9 +6,71 @@ import { CSVExportButton } from "@/components/reports/csv-export-button";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { Suspense } from "react";
+import { ASSIGNMENT_CATEGORIES } from "@/lib/constants";
 
 interface Props {
   searchParams: Promise<{ from?: string; to?: string }>;
+}
+
+function calculateWeightedGPA(
+  assignments: { category: string | null; gradeValue: number | null }[],
+  weights: { category: string; weight: number }[]
+): number | null {
+  const graded = assignments.filter((a) => a.gradeValue != null);
+  if (graded.length === 0) return null;
+
+  // No weights configured — simple average
+  if (weights.length === 0) {
+    return Math.round((graded.reduce((s, a) => s + a.gradeValue!, 0) / graded.length) * 10) / 10;
+  }
+
+  let totalWeight = 0;
+  let weightedSum = 0;
+
+  for (const w of weights) {
+    const catAssignments = graded.filter((a) => a.category === w.category);
+    if (catAssignments.length === 0) continue;
+    const avg = catAssignments.reduce((s, a) => s + a.gradeValue!, 0) / catAssignments.length;
+    weightedSum += avg * (w.weight / 100);
+    totalWeight += w.weight;
+  }
+
+  // Also include uncategorized graded assignments as simple average fallback
+  const uncategorized = graded.filter((a) => !a.category || !weights.some((w) => w.category === a.category));
+
+  if (totalWeight === 0 && uncategorized.length === 0) return null;
+
+  if (totalWeight > 0 && uncategorized.length === 0) {
+    // Scale up if some categories have no assignments yet
+    return Math.round((weightedSum / totalWeight * 100) * 10) / 10;
+  }
+
+  if (totalWeight === 0) {
+    // All assignments are uncategorized
+    return Math.round((uncategorized.reduce((s, a) => s + a.gradeValue!, 0) / uncategorized.length) * 10) / 10;
+  }
+
+  // Mix: weighted categories + uncategorized as simple average
+  const scaledWeighted = weightedSum / totalWeight * 100;
+  const uncatAvg = uncategorized.reduce((s, a) => s + a.gradeValue!, 0) / uncategorized.length;
+  const catCount = graded.length - uncategorized.length;
+  const totalCount = graded.length;
+  const blended = (scaledWeighted * catCount + uncatAvg * uncategorized.length) / totalCount;
+  return Math.round(blended * 10) / 10;
+}
+
+function gpaToLabel(gpa: number): string {
+  if (gpa >= 3.85) return "A";
+  if (gpa >= 3.5) return "A-";
+  if (gpa >= 3.15) return "B+";
+  if (gpa >= 2.85) return "B";
+  if (gpa >= 2.5) return "B-";
+  if (gpa >= 2.15) return "C+";
+  if (gpa >= 1.85) return "C";
+  if (gpa >= 1.5) return "C-";
+  if (gpa >= 1.15) return "D+";
+  if (gpa >= 0.5) return "D";
+  return "F";
 }
 
 export default async function ProgressReportPage({ searchParams }: Props) {
@@ -25,7 +87,7 @@ export default async function ProgressReportPage({ searchParams }: Props) {
   if (fromDate) dateFilter.gte = fromDate;
   if (toDate) dateFilter.lte = toDate;
 
-  const [students, subjects, assignments] = await Promise.all([
+  const [students, subjects, assignments, allWeights] = await Promise.all([
     db.student.findMany({
       where: { familyId },
       select: { id: true, name: true, gradeLevel: true },
@@ -46,12 +108,23 @@ export default async function ProgressReportPage({ searchParams }: Props) {
         status: true,
         studentId: true,
         subjectId: true,
+        category: true,
         gradeValue: true,
       },
     }),
+    db.subjectWeight.findMany({
+      where: { subject: { familyId } },
+      select: { subjectId: true, category: true, weight: true },
+    }),
   ]);
 
-  const subjectMap = new Map(subjects.map((s) => [s.id, s.name]));
+  // Group weights by subject
+  const weightsBySubject = new Map<string, { category: string; weight: number }[]>();
+  for (const w of allWeights) {
+    const existing = weightsBySubject.get(w.subjectId) || [];
+    existing.push({ category: w.category, weight: w.weight });
+    weightsBySubject.set(w.subjectId, existing);
+  }
 
   const csvData: Record<string, any>[] = [];
 
@@ -59,8 +132,12 @@ export default async function ProgressReportPage({ searchParams }: Props) {
     const sa = assignments.filter((a) => a.studentId === student.id);
     const completed = sa.filter((a) => a.status === "COMPLETED").length;
     const rate = sa.length > 0 ? Math.round((completed / sa.length) * 100) : 0;
-    const grades = sa.filter((a) => a.gradeValue != null).map((a) => a.gradeValue!);
-    const avgGrade = grades.length > 0 ? Math.round((grades.reduce((s, g) => s + g, 0) / grades.length) * 10) / 10 : null;
+
+    // Overall GPA: weighted across all subjects
+    const allGraded = sa.filter((a) => a.gradeValue != null);
+    const simpleAvg = allGraded.length > 0
+      ? Math.round((allGraded.reduce((s, a) => s + a.gradeValue!, 0) / allGraded.length) * 10) / 10
+      : null;
 
     const subjectBreakdown = subjects
       .map((subject) => {
@@ -68,8 +145,10 @@ export default async function ProgressReportPage({ searchParams }: Props) {
         if (subjectAssignments.length === 0) return null;
         const subCompleted = subjectAssignments.filter((a) => a.status === "COMPLETED").length;
         const subRate = Math.round((subCompleted / subjectAssignments.length) * 100);
-        const subGrades = subjectAssignments.filter((a) => a.gradeValue != null).map((a) => a.gradeValue!);
-        const subAvg = subGrades.length > 0 ? Math.round((subGrades.reduce((s, g) => s + g, 0) / subGrades.length) * 10) / 10 : null;
+
+        const weights = weightsBySubject.get(subject.id) || [];
+        const weightedGPA = calculateWeightedGPA(subjectAssignments, weights);
+        const hasWeights = weights.length > 0;
 
         csvData.push({
           student: student.name,
@@ -78,18 +157,22 @@ export default async function ProgressReportPage({ searchParams }: Props) {
           total: subjectAssignments.length,
           completed: subCompleted,
           completionRate: `${subRate}%`,
-          avgGrade: subAvg ?? "",
+          gpa: weightedGPA ?? "",
+          gpaLetter: weightedGPA != null ? gpaToLabel(weightedGPA) : "",
+          weighted: hasWeights ? "Yes" : "No",
         });
 
         return {
           name: subject.name,
+          subjectId: subject.id,
           total: subjectAssignments.length,
           completed: subCompleted,
           rate: subRate,
-          avgGrade: subAvg,
+          weightedGPA,
+          hasWeights,
         };
       })
-      .filter(Boolean) as { name: string; total: number; completed: number; rate: number; avgGrade: number | null }[];
+      .filter(Boolean) as { name: string; subjectId: string; total: number; completed: number; rate: number; weightedGPA: number | null; hasWeights: boolean }[];
 
     const noSubject = sa.filter((a) => !a.subjectId);
     if (noSubject.length > 0) {
@@ -97,7 +180,7 @@ export default async function ProgressReportPage({ searchParams }: Props) {
       const nsRate = Math.round((nsCompleted / noSubject.length) * 100);
       const nsGrades = noSubject.filter((a) => a.gradeValue != null).map((a) => a.gradeValue!);
       const nsAvg = nsGrades.length > 0 ? Math.round((nsGrades.reduce((s, g) => s + g, 0) / nsGrades.length) * 10) / 10 : null;
-      subjectBreakdown.push({ name: "No Subject", total: noSubject.length, completed: nsCompleted, rate: nsRate, avgGrade: nsAvg });
+      subjectBreakdown.push({ name: "No Subject", subjectId: "", total: noSubject.length, completed: nsCompleted, rate: nsRate, weightedGPA: nsAvg, hasWeights: false });
       csvData.push({
         student: student.name,
         gradeLevel: student.gradeLevel || "",
@@ -105,11 +188,19 @@ export default async function ProgressReportPage({ searchParams }: Props) {
         total: noSubject.length,
         completed: nsCompleted,
         completionRate: `${nsRate}%`,
-        avgGrade: nsAvg ?? "",
+        gpa: nsAvg ?? "",
+        gpaLetter: nsAvg != null ? gpaToLabel(nsAvg) : "",
+        weighted: "No",
       });
     }
 
-    return { student, total: sa.length, completed, rate, avgGrade, subjectBreakdown };
+    // Overall weighted GPA: average of subject GPAs that have data
+    const subjectGPAs = subjectBreakdown.filter((s) => s.weightedGPA != null).map((s) => s.weightedGPA!);
+    const overallGPA = subjectGPAs.length > 0
+      ? Math.round((subjectGPAs.reduce((s, g) => s + g, 0) / subjectGPAs.length) * 10) / 10
+      : simpleAvg;
+
+    return { student, total: sa.length, completed, rate, overallGPA, subjectBreakdown };
   });
 
   const csvColumns = [
@@ -119,7 +210,9 @@ export default async function ProgressReportPage({ searchParams }: Props) {
     { key: "total", label: "Assignments Total" },
     { key: "completed", label: "Assignments Completed" },
     { key: "completionRate", label: "Completion Rate" },
-    { key: "avgGrade", label: "Average Grade" },
+    { key: "gpa", label: "GPA" },
+    { key: "gpaLetter", label: "Letter Grade" },
+    { key: "weighted", label: "Weighted" },
   ];
 
   return (
@@ -145,7 +238,7 @@ export default async function ProgressReportPage({ searchParams }: Props) {
       </Suspense>
 
       <div className="space-y-5">
-        {studentData.map(({ student, total, completed, rate, avgGrade, subjectBreakdown }) => (
+        {studentData.map(({ student, total, completed, rate, overallGPA, subjectBreakdown }) => (
           <div key={student.id} className="bg-white rounded-2xl border border-[#EDE9E3] p-6 space-y-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
@@ -161,8 +254,10 @@ export default async function ProgressReportPage({ searchParams }: Props) {
                 <p className="text-sm text-slate-500">
                   {completed} / {total} completed
                 </p>
-                {avgGrade !== null && (
-                  <p className="text-xs text-slate-400">Avg grade: {avgGrade}</p>
+                {overallGPA !== null && (
+                  <p className="text-sm font-semibold text-teal-600">
+                    GPA: {overallGPA} ({gpaToLabel(overallGPA)})
+                  </p>
                 )}
               </div>
             </div>
@@ -187,8 +282,11 @@ export default async function ProgressReportPage({ searchParams }: Props) {
                       <span className="text-slate-500">
                         {sub.completed}/{sub.total} ({sub.rate}%)
                       </span>
-                      {sub.avgGrade !== null && (
-                        <span className="text-xs text-slate-400">avg: {sub.avgGrade}</span>
+                      {sub.weightedGPA !== null && (
+                        <span className={`text-xs font-medium ${sub.hasWeights ? "text-teal-600" : "text-slate-400"}`}>
+                          {sub.weightedGPA} ({gpaToLabel(sub.weightedGPA)})
+                          {sub.hasWeights && <span className="ml-1 text-[10px] text-teal-400">weighted</span>}
+                        </span>
                       )}
                     </div>
                   </div>

@@ -107,6 +107,18 @@ model Subject {
   family      Family               @relation(fields: [familyId], references: [id], onDelete: Cascade)
   assignments Assignment[]
   templates   AssignmentTemplate[]
+  weights     SubjectWeight[]
+}
+
+model SubjectWeight {
+  id        String @id @default(cuid())
+  subjectId String
+  category  String // TEST, QUIZ, HOMEWORK, PROJECT
+  weight    Float  // 0-100, must sum to 100 per subject
+
+  subject Subject @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+
+  @@unique([subjectId, category])
 }
 
 model Assignment {
@@ -122,6 +134,7 @@ model Assignment {
   actualMinutes    Int?
   gradeValue       Float?
   gradeLabel       String?
+  category         String?  // TEST, QUIZ, HOMEWORK, PROJECT
 
   studentId  String
   subjectId  String?

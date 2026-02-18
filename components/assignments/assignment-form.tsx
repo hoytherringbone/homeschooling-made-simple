@@ -4,7 +4,7 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { createAssignment } from "@/lib/actions/assignments";
-import { PRIORITY_OPTIONS } from "@/lib/constants";
+import { PRIORITY_OPTIONS, ASSIGNMENT_CATEGORIES } from "@/lib/constants";
 
 interface Student {
   id: string;
@@ -46,6 +46,7 @@ export function AssignmentForm({
     preselectedStudentId ? [preselectedStudentId] : []
   );
   const [subjectId, setSubjectId] = useState("");
+  const [category, setCategory] = useState("");
   const [priority, setPriority] = useState("MEDIUM");
   const [dueDate, setDueDate] = useState("");
   const [estimatedMinutes, setEstimatedMinutes] = useState("");
@@ -88,6 +89,7 @@ export function AssignmentForm({
         description: description.trim() || undefined,
         studentIds: selectedStudents,
         subjectId: subjectId || undefined,
+        category: (category || undefined) as "TEST" | "QUIZ" | "HOMEWORK" | "PROJECT" | undefined,
         priority: priority as "LOW" | "MEDIUM" | "HIGH",
         dueDate: dueDate || undefined,
         estimatedMinutes: estimatedMinutes ? Number(estimatedMinutes) : undefined,
@@ -198,8 +200,8 @@ export function AssignmentForm({
         )}
       </div>
 
-      {/* Subject + Priority row */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      {/* Subject + Category + Priority row */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div>
           <label htmlFor="subject" className={labelClass}>
             Subject
@@ -214,6 +216,25 @@ export function AssignmentForm({
             {subjects.map((s) => (
               <option key={s.id} value={s.id}>
                 {s.name}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div>
+          <label htmlFor="category" className={labelClass}>
+            Category
+          </label>
+          <select
+            id="category"
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+            className={inputClass}
+          >
+            <option value="">No category</option>
+            {ASSIGNMENT_CATEGORIES.map((c) => (
+              <option key={c.value} value={c.value}>
+                {c.label}
               </option>
             ))}
           </select>

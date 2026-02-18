@@ -5,7 +5,8 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { createSubject, updateSubject, deleteSubject } from "@/lib/actions/settings";
 import { SUBJECT_COLORS } from "@/lib/constants";
-import { Plus, Pencil, Trash2, X, Check } from "lucide-react";
+import { Plus, Pencil, Trash2, X, Check, Settings2 } from "lucide-react";
+import Link from "next/link";
 
 interface Subject {
   id: string;
@@ -125,6 +126,13 @@ export function SubjectManager({ subjects }: { subjects: Subject[] }) {
                 style={{ backgroundColor: subject.color || "#94a3b8" }}
               />
               <span className="flex-1 text-sm text-slate-900">{subject.name}</span>
+              <Link
+                href={`/subjects/${subject.id}`}
+                className="p-1.5 text-slate-400 hover:text-teal-600 hover:bg-teal-50 rounded-lg transition-colors"
+                title="Configure weights"
+              >
+                <Settings2 className="w-3.5 h-3.5" />
+              </Link>
               <button
                 onClick={() => startEdit(subject)}
                 className="p-1.5 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"

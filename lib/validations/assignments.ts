@@ -5,6 +5,7 @@ export const createAssignmentSchema = z.object({
   description: z.string().max(2000).optional(),
   studentIds: z.array(z.string()).min(1, "Select at least one student"),
   subjectId: z.string().optional(),
+  category: z.enum(["TEST", "QUIZ", "HOMEWORK", "PROJECT"]).optional(),
   priority: z.enum(["LOW", "MEDIUM", "HIGH"]).default("MEDIUM"),
   dueDate: z.string().optional(), // ISO date string from form
   estimatedMinutes: z.coerce.number().min(1).max(480).optional(),

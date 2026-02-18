@@ -31,7 +31,7 @@ export async function createAssignment(values: CreateAssignmentValues) {
     return { error: parsed.error.issues[0]?.message || "Invalid data" };
   }
 
-  const { title, description, studentIds, subjectId, priority, dueDate, estimatedMinutes, templateId } = parsed.data;
+  const { title, description, studentIds, subjectId, category, priority, dueDate, estimatedMinutes, templateId } = parsed.data;
   const familyId = session.user.familyId;
 
   // Verify all students belong to this family
@@ -64,6 +64,7 @@ export async function createAssignment(values: CreateAssignmentValues) {
           estimatedMinutes: estimatedMinutes || null,
           studentId,
           subjectId: subjectId || null,
+          category: category || null,
           familyId,
           templateId: templateId || null,
         },

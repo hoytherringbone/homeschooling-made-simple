@@ -78,6 +78,13 @@ export const LETTER_GRADES = [
   { label: "F", value: 0.0 },
 ] as const;
 
+export const ASSIGNMENT_CATEGORIES = [
+  { value: "TEST", label: "Test" },
+  { value: "QUIZ", label: "Quiz" },
+  { value: "HOMEWORK", label: "Homework" },
+  { value: "PROJECT", label: "Project" },
+] as const;
+
 export const PRIORITY_OPTIONS = [
   { value: "LOW", label: "Low" },
   { value: "MEDIUM", label: "Medium" },
