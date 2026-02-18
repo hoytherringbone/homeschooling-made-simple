@@ -29,7 +29,7 @@ export function Logo({
         </div>
       </div>
       {showText && (
-        <span className={`${s.text} font-semibold text-slate-900`}>
+        <span className={`${s.text} font-semibold text-slate-900 dark:text-slate-100`}>
           {shortText ? "HSMS" : "Home Schooling Made Simple"}
         </span>
       )}

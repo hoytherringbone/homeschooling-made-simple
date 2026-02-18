@@ -80,7 +80,7 @@ export function AppSidebar({ user, unreadCount }: AppSidebarProps) {
 
   const sidebar = (
     <div className="flex flex-col h-full">
-      <div className="p-5 border-b border-[#EDE9E3]">
+      <div className="p-5 border-b border-[#EDE9E3] dark:border-slate-700">
         <Logo size="sm" href="/dashboard" shortText />
       </div>
 
@@ -92,8 +92,8 @@ export function AppSidebar({ user, unreadCount }: AppSidebarProps) {
             onClick={() => setMobileOpen(false)}
             className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150 ${
               isActive(item.href)
-                ? "bg-teal-50 text-teal-700 border-l-2 border-teal-600 ml-0"
-                : "text-slate-500 hover:bg-slate-50 hover:text-slate-700"
+                ? "bg-teal-50 text-teal-700 dark:bg-teal-900/30 dark:text-teal-400 border-l-2 border-teal-600 ml-0"
+                : "text-slate-500 dark:text-slate-400 hover:bg-slate-50 hover:text-slate-700 dark:hover:bg-slate-700 dark:hover:text-slate-200"
             }`}
           >
             <item.icon className="w-4.5 h-4.5" strokeWidth={1.75} />
@@ -107,7 +107,7 @@ export function AppSidebar({ user, unreadCount }: AppSidebarProps) {
         ))}
       </nav>
 
-      <div className="border-t border-[#EDE9E3] p-4 space-y-2">
+      <div className="border-t border-[#EDE9E3] dark:border-slate-700 p-4 space-y-2">
         <div className="flex items-center gap-3 px-2 mb-3">
           <div className="w-8 h-8 bg-teal-600 rounded-full flex items-center justify-center">
             <span className="text-xs font-medium text-white">
@@ -115,10 +115,10 @@ export function AppSidebar({ user, unreadCount }: AppSidebarProps) {
             </span>
           </div>
           <div className="min-w-0">
-            <p className="text-sm font-medium text-slate-900 truncate">
+            <p className="text-sm font-medium text-slate-900 dark:text-slate-100 truncate">
               {user.name}
             </p>
-            <p className="text-xs text-slate-500 capitalize">
+            <p className="text-xs text-slate-500 dark:text-slate-400 capitalize">
               {user.role.toLowerCase().replace("_", " ")}
             </p>
           </div>
@@ -128,7 +128,7 @@ export function AppSidebar({ user, unreadCount }: AppSidebarProps) {
           <Link
             href="/settings"
             onClick={() => setMobileOpen(false)}
-            className="flex items-center gap-3 px-3 py-2 rounded-xl text-sm text-slate-500 hover:bg-slate-50 hover:text-slate-700 transition-colors"
+            className="flex items-center gap-3 px-3 py-2 rounded-xl text-sm text-slate-500 dark:text-slate-400 hover:bg-slate-50 hover:text-slate-700 dark:hover:bg-slate-700 dark:hover:text-slate-200 transition-colors"
           >
             <Settings className="w-4 h-4" strokeWidth={1.75} />
             Settings
@@ -137,7 +137,7 @@ export function AppSidebar({ user, unreadCount }: AppSidebarProps) {
 
         <button
           onClick={() => signOut({ callbackUrl: "/login" })}
-          className="flex items-center gap-3 px-3 py-2 rounded-xl text-sm text-slate-500 hover:bg-rose-50 hover:text-rose-600 transition-colors w-full"
+          className="flex items-center gap-3 px-3 py-2 rounded-xl text-sm text-slate-500 dark:text-slate-400 hover:bg-rose-50 hover:text-rose-600 dark:hover:bg-rose-900/30 dark:hover:text-rose-400 transition-colors w-full"
         >
           <LogOut className="w-4 h-4" strokeWidth={1.75} />
           Sign Out
@@ -149,10 +149,10 @@ export function AppSidebar({ user, unreadCount }: AppSidebarProps) {
   return (
     <>
       {/* Mobile top bar */}
-      <div className="lg:hidden fixed top-0 left-0 right-0 h-14 bg-white border-b border-[#EDE9E3] flex items-center px-4 z-40">
+      <div className="lg:hidden fixed top-0 left-0 right-0 h-14 bg-white dark:bg-slate-800 border-b border-[#EDE9E3] dark:border-slate-700 flex items-center px-4 z-40">
         <button
           onClick={() => setMobileOpen(!mobileOpen)}
-          className="p-2 -ml-2 rounded-lg hover:bg-slate-100"
+          className="p-2 -ml-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700"
         >
           {mobileOpen ? (
             <X className="w-5 h-5 text-slate-600" />
@@ -175,7 +175,7 @@ export function AppSidebar({ user, unreadCount }: AppSidebarProps) {
 
       {/* Mobile sidebar */}
       <div
-        className={`lg:hidden fixed top-14 left-0 bottom-0 w-64 bg-white z-50 transition-transform duration-200 ${
+        className={`lg:hidden fixed top-14 left-0 bottom-0 w-64 bg-white dark:bg-slate-800 z-50 transition-transform duration-200 ${
           mobileOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
@@ -183,7 +183,7 @@ export function AppSidebar({ user, unreadCount }: AppSidebarProps) {
       </div>
 
       {/* Desktop sidebar */}
-      <div className="hidden lg:block w-64 bg-white border-r border-[#EDE9E3] shrink-0">
+      <div className="hidden lg:block w-64 bg-white dark:bg-slate-800 border-r border-[#EDE9E3] dark:border-slate-700 shrink-0">
         {sidebar}
       </div>
 

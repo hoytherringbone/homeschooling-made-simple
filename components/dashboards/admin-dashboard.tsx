@@ -117,13 +117,13 @@ export async function AdminDashboard({ user }: AdminDashboardProps) {
         {stats.map((stat) => {
           const content = (
             <div
-              className={`bg-white rounded-2xl border border-[#EDE9E3] p-4 ${stat.href ? "hover:border-teal-200 hover:shadow-sm transition-all cursor-pointer" : ""}`}
+              className={`bg-white dark:bg-slate-800 rounded-2xl border border-[#EDE9E3] dark:border-slate-700 p-4 ${stat.href ? "hover:border-teal-200 dark:hover:border-teal-800 hover:shadow-sm dark:hover:shadow-slate-900/50 transition-all cursor-pointer" : ""}`}
             >
               <div className={`${stat.bg} w-10 h-10 rounded-xl flex items-center justify-center mb-3`}>
                 <stat.icon className={`w-5 h-5 ${stat.color}`} />
               </div>
-              <p className="text-2xl font-bold text-slate-900">{stat.value}</p>
-              <p className="text-xs text-slate-500 mt-0.5">{stat.label}</p>
+              <p className="text-2xl font-bold text-slate-900 dark:text-slate-100">{stat.value}</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{stat.label}</p>
             </div>
           );
           return stat.href ? (
@@ -137,9 +137,9 @@ export async function AdminDashboard({ user }: AdminDashboardProps) {
       </div>
 
       <div className="grid md:grid-cols-2 gap-6">
-        <div className="bg-white rounded-2xl border border-[#EDE9E3] p-6">
+        <div className="bg-white dark:bg-slate-800 rounded-2xl border border-[#EDE9E3] dark:border-slate-700 p-6">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-slate-900">All Families</h2>
+            <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">All Families</h2>
             <Link href="/admin/families" className="text-xs text-teal-600 hover:text-teal-700 font-medium">
               View All →
             </Link>
@@ -151,11 +151,11 @@ export async function AdminDashboard({ user }: AdminDashboardProps) {
                 <Link
                   key={family.id}
                   href={`/admin/families/${family.id}`}
-                  className="flex items-center justify-between p-3 rounded-xl bg-slate-50 hover:bg-slate-100 transition-colors cursor-pointer"
+                  className="flex items-center justify-between p-3 rounded-xl bg-slate-50 dark:bg-slate-700 hover:bg-slate-100 dark:hover:bg-slate-600 transition-colors cursor-pointer"
                 >
                   <div>
-                    <p className="font-medium text-slate-900">{family.name}</p>
-                    <p className="text-xs text-slate-500">
+                    <p className="font-medium text-slate-900 dark:text-slate-100">{family.name}</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">
                       {family._count.users} user{family._count.users !== 1 ? "s" : ""} · {family._count.students} student{family._count.students !== 1 ? "s" : ""} · {family._count.assignments} assignment{family._count.assignments !== 1 ? "s" : ""}
                     </p>
                   </div>
@@ -163,10 +163,10 @@ export async function AdminDashboard({ user }: AdminDashboardProps) {
                     <span
                       className={`text-xs px-2 py-1 rounded-full font-medium ${
                         family.subscriptionStatus === "active"
-                          ? "bg-emerald-50 text-emerald-700"
+                          ? "bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400"
                           : family.subscriptionStatus === "trial"
-                            ? "bg-blue-50 text-blue-700"
-                            : "bg-slate-100 text-slate-600"
+                            ? "bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400"
+                            : "bg-slate-100 text-slate-600 dark:bg-slate-600 dark:text-slate-300"
                       }`}
                     >
                       {family.subscriptionStatus}
@@ -176,14 +176,14 @@ export async function AdminDashboard({ user }: AdminDashboardProps) {
                 </Link>
               ))}
             {families.filter((f) => f.name !== "HSMS Administration").length === 0 && (
-              <p className="text-sm text-slate-400 text-center py-4">No families registered yet.</p>
+              <p className="text-sm text-slate-400 dark:text-slate-500 text-center py-4">No families registered yet.</p>
             )}
           </div>
         </div>
 
-        <div className="bg-white rounded-2xl border border-[#EDE9E3] p-6">
+        <div className="bg-white dark:bg-slate-800 rounded-2xl border border-[#EDE9E3] dark:border-slate-700 p-6">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-slate-900">All Parents</h2>
+            <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">All Parents</h2>
             <Link href="/admin/parents" className="text-xs text-teal-600 hover:text-teal-700 font-medium">
               View All →
             </Link>
@@ -193,11 +193,11 @@ export async function AdminDashboard({ user }: AdminDashboardProps) {
               <Link
                 key={parent.id}
                 href={`/admin/parents/${parent.id}`}
-                className="flex items-center justify-between p-3 rounded-xl bg-slate-50 hover:bg-slate-100 transition-colors cursor-pointer"
+                className="flex items-center justify-between p-3 rounded-xl bg-slate-50 dark:bg-slate-700 hover:bg-slate-100 dark:hover:bg-slate-600 transition-colors cursor-pointer"
               >
                 <div>
-                  <p className="font-medium text-slate-900">{parent.name}</p>
-                  <p className="text-xs text-slate-500">{parent.email}</p>
+                  <p className="font-medium text-slate-900 dark:text-slate-100">{parent.name}</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">{parent.email}</p>
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="text-xs text-slate-400">{parent.family.name}</span>
@@ -206,14 +206,14 @@ export async function AdminDashboard({ user }: AdminDashboardProps) {
               </Link>
             ))}
             {parentUsers.length === 0 && (
-              <p className="text-sm text-slate-400 text-center py-4">No parents registered yet.</p>
+              <p className="text-sm text-slate-400 dark:text-slate-500 text-center py-4">No parents registered yet.</p>
             )}
           </div>
         </div>
 
-        <div className="bg-white rounded-2xl border border-[#EDE9E3] p-6 md:col-span-2">
+        <div className="bg-white dark:bg-slate-800 rounded-2xl border border-[#EDE9E3] dark:border-slate-700 p-6 md:col-span-2">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-slate-900">All Students</h2>
+            <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">All Students</h2>
             <Link href="/admin/students" className="text-xs text-teal-600 hover:text-teal-700 font-medium">
               View All →
             </Link>
@@ -223,11 +223,11 @@ export async function AdminDashboard({ user }: AdminDashboardProps) {
               <Link
                 key={student.id}
                 href={`/admin/students/${student.id}`}
-                className="flex items-center justify-between p-3 rounded-xl bg-slate-50 hover:bg-slate-100 transition-colors cursor-pointer"
+                className="flex items-center justify-between p-3 rounded-xl bg-slate-50 dark:bg-slate-700 hover:bg-slate-100 dark:hover:bg-slate-600 transition-colors cursor-pointer"
               >
                 <div>
-                  <p className="font-medium text-slate-900">{student.name}</p>
-                  <p className="text-xs text-slate-500">
+                  <p className="font-medium text-slate-900 dark:text-slate-100">{student.name}</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">
                     {student.gradeLevel || "No grade"} · {student.family.name}
                   </p>
                 </div>
@@ -240,7 +240,7 @@ export async function AdminDashboard({ user }: AdminDashboardProps) {
               </Link>
             ))}
             {allStudents.length === 0 && (
-              <p className="text-sm text-slate-400 text-center py-4 col-span-full">No students registered yet.</p>
+              <p className="text-sm text-slate-400 dark:text-slate-500 text-center py-4 col-span-full">No students registered yet.</p>
             )}
           </div>
         </div>

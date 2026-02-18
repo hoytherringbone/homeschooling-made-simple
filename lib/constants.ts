@@ -54,11 +54,11 @@ export const GRADE_LEVELS = [
 ];
 
 export const ASSIGNMENT_STATUS = {
-  ASSIGNED: { label: "Assigned", bg: "bg-slate-100", text: "text-slate-700" },
-  IN_PROGRESS: { label: "In Progress", bg: "bg-blue-50", text: "text-blue-700" },
-  SUBMITTED: { label: "Submitted", bg: "bg-amber-50", text: "text-amber-700" },
-  RETURNED: { label: "Returned", bg: "bg-rose-50", text: "text-rose-700" },
-  COMPLETED: { label: "Completed", bg: "bg-green-50", text: "text-green-700" },
+  ASSIGNED: { label: "Assigned", bg: "bg-slate-100 dark:bg-slate-700", text: "text-slate-700 dark:text-slate-300" },
+  IN_PROGRESS: { label: "In Progress", bg: "bg-blue-50 dark:bg-blue-900/30", text: "text-blue-700 dark:text-blue-400" },
+  SUBMITTED: { label: "Submitted", bg: "bg-amber-50 dark:bg-amber-900/30", text: "text-amber-700 dark:text-amber-400" },
+  RETURNED: { label: "Returned", bg: "bg-rose-50 dark:bg-rose-900/30", text: "text-rose-700 dark:text-rose-400" },
+  COMPLETED: { label: "Completed", bg: "bg-green-50 dark:bg-green-900/30", text: "text-green-700 dark:text-green-400" },
 } as const;
 
 export const VALID_TRANSITIONS: Record<string, { roles: string[]; to: string[] }> = {
@@ -76,7 +76,7 @@ export const PRIORITY_OPTIONS = [
 ] as const;
 
 export const PRIORITY_COLORS = {
-  LOW: { bg: "bg-slate-100", text: "text-slate-600" },
-  MEDIUM: { bg: "bg-blue-50", text: "text-blue-600" },
-  HIGH: { bg: "bg-rose-50", text: "text-rose-600" },
+  LOW: { bg: "bg-slate-100 dark:bg-slate-700", text: "text-slate-600 dark:text-slate-300" },
+  MEDIUM: { bg: "bg-blue-50 dark:bg-blue-900/30", text: "text-blue-600 dark:text-blue-400" },
+  HIGH: { bg: "bg-rose-50 dark:bg-rose-900/30", text: "text-rose-600 dark:text-rose-400" },
 } as const;

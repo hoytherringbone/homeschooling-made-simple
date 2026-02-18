@@ -103,7 +103,7 @@ export async function ParentDashboard({ user }: ParentDashboardProps) {
           <Link
             key={stat.label}
             href={stat.href}
-            className="bg-white rounded-2xl border border-[#EDE9E3] p-5 hover:shadow-sm hover:border-teal-200 transition-all duration-200 cursor-pointer block"
+            className="bg-white dark:bg-slate-800 rounded-2xl border border-[#EDE9E3] dark:border-slate-700 p-5 hover:shadow-sm dark:hover:shadow-slate-900/50 hover:border-teal-200 dark:hover:border-teal-800 transition-all duration-200 cursor-pointer block"
           >
             <div className="flex items-center gap-3 mb-3">
               <div
@@ -111,11 +111,11 @@ export async function ParentDashboard({ user }: ParentDashboardProps) {
               >
                 <stat.icon className={`w-4.5 h-4.5 ${stat.color}`} strokeWidth={1.75} />
               </div>
-              <span className="text-xs font-medium text-slate-500 uppercase tracking-wide">
+              <span className="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide">
                 {stat.label}
               </span>
             </div>
-            <p className="text-2xl font-semibold text-slate-900">
+            <p className="text-2xl font-semibold text-slate-900 dark:text-slate-100">
               {stat.value}
             </p>
           </Link>
@@ -126,7 +126,7 @@ export async function ParentDashboard({ user }: ParentDashboardProps) {
       {awaitingReview.length > 0 && (
         <div className="mb-8">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-slate-900 flex items-center gap-2">
+            <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100 flex items-center gap-2">
               <ClipboardCheck className="w-5 h-5 text-amber-500" />
               Awaiting Review
             </h2>
@@ -141,7 +141,7 @@ export async function ParentDashboard({ user }: ParentDashboardProps) {
             {awaitingReview.slice(0, 5).map((assignment) => (
               <div
                 key={assignment.id}
-                className="bg-white rounded-2xl border border-[#EDE9E3] p-4 space-y-3"
+                className="bg-white dark:bg-slate-800 rounded-2xl border border-[#EDE9E3] dark:border-slate-700 p-4 space-y-3"
               >
                 <div className="flex items-center gap-3">
                   {assignment.subject && (
@@ -155,18 +155,18 @@ export async function ParentDashboard({ user }: ParentDashboardProps) {
                   <div className="flex-1 min-w-0">
                     <Link
                       href={`/assignments/${assignment.id}`}
-                      className="font-medium text-slate-900 hover:text-teal-700 transition-colors truncate block"
+                      className="font-medium text-slate-900 dark:text-slate-100 hover:text-teal-700 transition-colors truncate block"
                     >
                       {assignment.title}
                     </Link>
                     <div className="flex items-center gap-2 mt-0.5">
-                      <span className="text-xs text-slate-500">
+                      <span className="text-xs text-slate-500 dark:text-slate-400">
                         {assignment.student.name}
                       </span>
                       {assignment.subject && (
                         <>
-                          <span className="text-slate-300">·</span>
-                          <span className="text-xs text-slate-500">
+                          <span className="text-slate-300 dark:text-slate-600">·</span>
+                          <span className="text-xs text-slate-500 dark:text-slate-400">
                             {assignment.subject.name}
                           </span>
                         </>
@@ -187,7 +187,7 @@ export async function ParentDashboard({ user }: ParentDashboardProps) {
       )}
 
       {/* Student Overview */}
-      <h2 className="text-lg font-semibold text-slate-900 mb-4">
+      <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-4">
         Student Overview
       </h2>
 
@@ -214,17 +214,17 @@ export async function ParentDashboard({ user }: ParentDashboardProps) {
 
             return (
               <Link key={student.id} href={`/students/${student.id}`}>
-                <div className="bg-white rounded-2xl border border-[#EDE9E3] p-5 hover:shadow-sm hover:border-teal-200 transition-all duration-200 cursor-pointer">
+                <div className="bg-white dark:bg-slate-800 rounded-2xl border border-[#EDE9E3] dark:border-slate-700 p-5 hover:shadow-sm dark:hover:shadow-slate-900/50 hover:border-teal-200 dark:hover:border-teal-800 transition-all duration-200 cursor-pointer">
                   <div className="flex items-center gap-3 mb-4">
-                    <div className="w-10 h-10 bg-teal-50 rounded-full flex items-center justify-center">
-                      <span className="text-sm font-semibold text-teal-700">
+                    <div className="w-10 h-10 bg-teal-50 dark:bg-teal-900/30 rounded-full flex items-center justify-center">
+                      <span className="text-sm font-semibold text-teal-700 dark:text-teal-400">
                         {student.name.charAt(0).toUpperCase()}
                       </span>
                     </div>
                     <div>
-                      <p className="font-medium text-slate-900">{student.name}</p>
+                      <p className="font-medium text-slate-900 dark:text-slate-100">{student.name}</p>
                       {student.gradeLevel && (
-                        <p className="text-xs text-slate-500">
+                        <p className="text-xs text-slate-500 dark:text-slate-400">
                           {student.gradeLevel} Grade
                         </p>
                       )}
@@ -233,12 +233,12 @@ export async function ParentDashboard({ user }: ParentDashboardProps) {
 
                   <div className="space-y-2">
                     <div className="flex justify-between text-sm">
-                      <span className="text-slate-500">Progress</span>
-                      <span className="font-medium text-slate-700">
+                      <span className="text-slate-500 dark:text-slate-400">Progress</span>
+                      <span className="font-medium text-slate-700 dark:text-slate-300">
                         {studentCompleted}/{studentTotal} completed
                       </span>
                     </div>
-                    <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
+                    <div className="h-2 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
                       <div
                         className="h-full bg-teal-500 rounded-full transition-all"
                         style={{ width: `${progress}%` }}
