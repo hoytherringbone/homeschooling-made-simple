@@ -35,17 +35,8 @@ export default async function StudentDetailPage({ params }: PageProps) {
   const completed = student.assignments.filter(
     (a) => a.status === "COMPLETED"
   ).length;
-  const submitted = student.assignments.filter(
-    (a) => a.status === "SUBMITTED"
-  ).length;
-  const inProgress = student.assignments.filter(
-    (a) => a.status === "IN_PROGRESS"
-  ).length;
   const assigned = student.assignments.filter(
     (a) => a.status === "ASSIGNED"
-  ).length;
-  const returned = student.assignments.filter(
-    (a) => a.status === "RETURNED"
   ).length;
 
   const initials = student.name
@@ -93,12 +84,10 @@ export default async function StudentDetailPage({ params }: PageProps) {
         </div>
 
         {/* Stats row */}
-        <div className="grid grid-cols-5 gap-3 mt-6">
+        <div className="grid grid-cols-3 gap-3 mt-6">
           {[
-            { label: "Assigned", value: assigned, color: "bg-slate-50 text-slate-700" },
-            { label: "In Progress", value: inProgress, color: "bg-blue-50 text-blue-700" },
-            { label: "Submitted", value: submitted, color: "bg-amber-50 text-amber-700" },
-            { label: "Returned", value: returned, color: "bg-rose-50 text-rose-700" },
+            { label: "Total", value: total, color: "bg-slate-50 text-slate-700" },
+            { label: "Assigned", value: assigned, color: "bg-blue-50 text-blue-700" },
             { label: "Completed", value: completed, color: "bg-green-50 text-green-700" },
           ].map((stat) => (
             <div

@@ -2,7 +2,7 @@ import { db } from "@/lib/db";
 import { PageHeader } from "@/components/page-header";
 import { EmptyState } from "@/components/empty-state";
 import { AssignmentCard } from "@/components/assignments/assignment-card";
-import { BookOpen, CheckCircle2, Clock, AlertTriangle } from "lucide-react";
+import { BookOpen, CheckCircle2, Clock } from "lucide-react";
 import Link from "next/link";
 
 interface StudentDashboardProps {
@@ -46,12 +46,8 @@ export async function StudentDashboard({ user }: StudentDashboardProps) {
   today.setHours(0, 0, 0, 0);
 
   const todoAssignments = assignments.filter(
-    (a) => a.status === "ASSIGNED" || a.status === "IN_PROGRESS",
+    (a) => a.status === "ASSIGNED",
   );
-
-  const returned = assignments.filter((a) => a.status === "RETURNED");
-
-  const submitted = assignments.filter((a) => a.status === "SUBMITTED");
 
   const recentlyCompleted = assignments
     .filter((a) => a.status === "COMPLETED")
@@ -72,25 +68,6 @@ export async function StudentDashboard({ user }: StudentDashboardProps) {
         />
       ) : (
         <div className="space-y-8">
-          {/* Returned — needs attention */}
-          {returned.length > 0 && (
-            <section>
-              <h2 className="text-lg font-semibold text-slate-900 mb-4 flex items-center gap-2">
-                <AlertTriangle className="w-5 h-5 text-rose-500" />
-                Needs Revision
-              </h2>
-              <div className="space-y-3">
-                {returned.map((assignment) => (
-                  <AssignmentCard
-                    key={assignment.id}
-                    assignment={assignment}
-                    showStudent={false}
-                  />
-                ))}
-              </div>
-            </section>
-          )}
-
           {/* To Do */}
           <section>
             <h2 className="text-lg font-semibold text-slate-900 mb-4 flex items-center gap-2">
@@ -113,24 +90,6 @@ export async function StudentDashboard({ user }: StudentDashboardProps) {
               </div>
             )}
           </section>
-
-          {/* Submitted / Waiting for review */}
-          {submitted.length > 0 && (
-            <section>
-              <h2 className="text-lg font-semibold text-slate-900 mb-4">
-                Waiting for Review
-              </h2>
-              <div className="space-y-3">
-                {submitted.map((assignment) => (
-                  <AssignmentCard
-                    key={assignment.id}
-                    assignment={assignment}
-                    showStudent={false}
-                  />
-                ))}
-              </div>
-            </section>
-          )}
 
           {/* Recently Completed */}
           {recentlyCompleted.length > 0 && (

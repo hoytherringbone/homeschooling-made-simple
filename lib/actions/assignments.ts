@@ -10,9 +10,11 @@ import {
   createAssignmentSchema,
   statusTransitionSchema,
   createCommentSchema,
+  importRowSchema,
   type CreateAssignmentValues,
   type StatusTransitionValues,
   type CreateCommentValues,
+  type ImportRowValues,
 } from "@/lib/validations/assignments";
 
 export async function createAssignment(values: CreateAssignmentValues) {
@@ -119,7 +121,7 @@ export async function updateAssignmentStatus(values: StatusTransitionValues) {
     return { error: parsed.error.issues[0]?.message || "Invalid data" };
   }
 
-  const { assignmentId, newStatus, comment } = parsed.data;
+  const { assignmentId, newStatus, comment, gradeLabel, gradeValue } = parsed.data;
 
   // Fetch the assignment and verify ownership
   const assignment = await db.assignment.findFirst({
@@ -154,8 +156,10 @@ export async function updateAssignmentStatus(values: StatusTransitionValues) {
   const updateData: Record<string, unknown> = { status: newStatus };
   if (newStatus === "COMPLETED") {
     updateData.completedDate = new Date();
+    if (gradeLabel !== undefined) updateData.gradeLabel = gradeLabel;
+    if (gradeValue !== undefined) updateData.gradeValue = gradeValue;
   }
-  if (newStatus === "IN_PROGRESS" && assignment.status === "RETURNED") {
+  if (newStatus === "ASSIGNED") {
     updateData.completedDate = null;
   }
 
@@ -164,8 +168,8 @@ export async function updateAssignmentStatus(values: StatusTransitionValues) {
     data: updateData,
   });
 
-  // Create mandatory comment when returning
-  if (newStatus === "RETURNED" && comment) {
+  // Create mandatory comment when returning to ASSIGNED
+  if (newStatus === "ASSIGNED" && comment) {
     await db.comment.create({
       data: {
         content: comment,
@@ -197,35 +201,33 @@ export async function updateAssignmentStatus(values: StatusTransitionValues) {
     );
   }
 
-  // Create notifications based on status transition
-  if (newStatus === "IN_PROGRESS" || newStatus === "SUBMITTED") {
-    // Student acted → notify parent(s)
+  // Create notifications
+  if (newStatus === "COMPLETED" && userRole === "STUDENT") {
+    // Student submitted → notify parent(s)
     const parents = await db.user.findMany({
       where: { familyId: session.user.familyId, role: "PARENT" },
       select: { id: true },
     });
-    const statusLabel = newStatus === "IN_PROGRESS" ? "started working on" : "submitted";
     await createNotifications(
       parents.map((p) => ({
         type: "STATUS_CHANGED" as const,
-        message: `${session.user.name} ${statusLabel} "${assignment.title}"`,
+        message: `${session.user.name} submitted "${assignment.title}"`,
         userId: p.id,
         familyId: session.user.familyId,
         assignmentId,
         actorName: session.user.name || "Student",
       }))
     );
-  } else if (newStatus === "COMPLETED" || newStatus === "RETURNED") {
-    // Parent acted → notify the student
+  } else if (newStatus === "ASSIGNED" && (userRole === "PARENT" || userRole === "SUPER_ADMIN")) {
+    // Parent returned → notify the student
     const student = await db.student.findUnique({
       where: { id: assignment.studentId },
       select: { userId: true },
     });
     if (student?.userId) {
-      const statusLabel = newStatus === "COMPLETED" ? "approved" : "returned";
       await createNotification({
         type: "STATUS_CHANGED",
-        message: `${session.user.name} ${statusLabel} "${assignment.title}"`,
+        message: `${session.user.name} returned "${assignment.title}"`,
         userId: student.userId,
         familyId: session.user.familyId,
         assignmentId,
@@ -342,4 +344,97 @@ export async function deleteAssignment(assignmentId: string) {
   revalidatePath("/dashboard");
 
   return { success: true };
+}
+
+export async function bulkCreateAssignments(rows: ImportRowValues[]) {
+  const session = await auth();
+  if (!session?.user?.id || !session.user.familyId) {
+    return { error: "Not authenticated" };
+  }
+  if (session.user.role !== "PARENT" && session.user.role !== "SUPER_ADMIN") {
+    return { error: "Only parents can import assignments" };
+  }
+
+  const familyId = session.user.familyId;
+
+  // Load students and subjects for name matching
+  const [students, subjects] = await Promise.all([
+    db.student.findMany({ where: { familyId }, select: { id: true, name: true } }),
+    db.subject.findMany({ where: { familyId }, select: { id: true, name: true } }),
+  ]);
+
+  const studentByName = new Map(students.map((s) => [s.name.toLowerCase(), s.id]));
+  const subjectByName = new Map(subjects.map((s) => [s.name.toLowerCase(), s.id]));
+
+  const errors: string[] = [];
+  const toCreate: Array<{
+    title: string;
+    description: string | null;
+    status: string;
+    priority: string;
+    dueDate: Date | null;
+    estimatedMinutes: number | null;
+    studentId: string;
+    subjectId: string | null;
+    familyId: string;
+  }> = [];
+
+  for (let i = 0; i < rows.length; i++) {
+    const row = rows[i];
+    const parsed = importRowSchema.safeParse(row);
+    if (!parsed.success) {
+      errors.push(`Row ${i + 1}: ${parsed.error.issues[0]?.message}`);
+      continue;
+    }
+
+    const studentId = studentByName.get(parsed.data.studentName.toLowerCase());
+    if (!studentId) {
+      errors.push(`Row ${i + 1}: Student "${parsed.data.studentName}" not found`);
+      continue;
+    }
+
+    const subjectId = parsed.data.subjectName
+      ? subjectByName.get(parsed.data.subjectName.toLowerCase()) || null
+      : null;
+
+    if (parsed.data.subjectName && !subjectId) {
+      errors.push(`Row ${i + 1}: Subject "${parsed.data.subjectName}" not found`);
+      continue;
+    }
+
+    let dueDate: Date | null = null;
+    if (parsed.data.dueDate) {
+      const d = new Date(parsed.data.dueDate);
+      if (isNaN(d.getTime())) {
+        errors.push(`Row ${i + 1}: Invalid date "${parsed.data.dueDate}"`);
+        continue;
+      }
+      dueDate = d;
+    }
+
+    toCreate.push({
+      title: parsed.data.title,
+      description: parsed.data.description || null,
+      status: "ASSIGNED",
+      priority: parsed.data.priority,
+      dueDate,
+      estimatedMinutes: parsed.data.estimatedMinutes || null,
+      studentId,
+      subjectId,
+      familyId,
+    });
+  }
+
+  if (errors.length > 0) {
+    return { error: errors.join("\n"), errors };
+  }
+
+  await db.$transaction(
+    toCreate.map((data) => db.assignment.create({ data }))
+  );
+
+  revalidatePath("/assignments");
+  revalidatePath("/dashboard");
+
+  return { success: true, count: toCreate.length };
 }

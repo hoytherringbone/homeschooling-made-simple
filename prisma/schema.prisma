@@ -113,7 +113,7 @@ model Assignment {
   id               String   @id @default(cuid())
   title            String
   description      String?
-  status           String   @default("ASSIGNED") // ASSIGNED, IN_PROGRESS, SUBMITTED, RETURNED, COMPLETED
+  status           String   @default("ASSIGNED") // ASSIGNED, COMPLETED
   priority         String   @default("MEDIUM") // LOW, MEDIUM, HIGH
   dueDate          DateTime?
   assignedDate     DateTime @default(now())

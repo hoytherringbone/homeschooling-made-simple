@@ -2,15 +2,11 @@ import { db } from "@/lib/db";
 import Link from "next/link";
 import { PageHeader } from "@/components/page-header";
 import { EmptyState } from "@/components/empty-state";
-import { StatusBadge } from "@/components/status-badge";
-import { StatusActions } from "@/components/assignments/status-actions";
 import {
   Users,
   BookOpen,
-  ClipboardCheck,
   AlertTriangle,
   GraduationCap,
-  ArrowRight,
 } from "lucide-react";
 
 interface ParentDashboardProps {
@@ -41,9 +37,6 @@ export async function ParentDashboard({ user }: ParentDashboardProps) {
   const assignmentsThisWeek = assignments.filter(
     (a) => a.dueDate && a.dueDate >= now && a.dueDate <= weekFromNow,
   );
-  const awaitingReview = assignments.filter(
-    (a) => a.status === "SUBMITTED",
-  );
   const overdue = assignments.filter(
     (a) => a.dueDate && a.dueDate < now && a.status !== "COMPLETED",
   );
@@ -70,15 +63,7 @@ export async function ParentDashboard({ user }: ParentDashboardProps) {
       icon: BookOpen,
       color: "text-blue-600",
       bg: "bg-blue-50",
-      href: "/assignments?status=ASSIGNED&status=IN_PROGRESS",
-    },
-    {
-      label: "Awaiting Review",
-      value: awaitingReview.length,
-      icon: ClipboardCheck,
-      color: "text-amber-600",
-      bg: "bg-amber-50",
-      href: "/assignments?status=SUBMITTED",
+      href: "/assignments?status=ASSIGNED",
     },
     {
       label: "Overdue",
@@ -98,7 +83,7 @@ export async function ParentDashboard({ user }: ParentDashboardProps) {
       />
 
       {/* Quick Stats */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      <div className="grid grid-cols-3 gap-4 mb-8">
         {stats.map((stat) => (
           <Link
             key={stat.label}
@@ -121,70 +106,6 @@ export async function ParentDashboard({ user }: ParentDashboardProps) {
           </Link>
         ))}
       </div>
-
-      {/* Awaiting Review */}
-      {awaitingReview.length > 0 && (
-        <div className="mb-8">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100 flex items-center gap-2">
-              <ClipboardCheck className="w-5 h-5 text-amber-500" />
-              Awaiting Review
-            </h2>
-            <Link
-              href="/assignments?status=SUBMITTED"
-              className="text-sm text-teal-600 hover:text-teal-700 flex items-center gap-1"
-            >
-              View all <ArrowRight className="w-3.5 h-3.5" />
-            </Link>
-          </div>
-          <div className="space-y-3">
-            {awaitingReview.slice(0, 5).map((assignment) => (
-              <div
-                key={assignment.id}
-                className="bg-white dark:bg-slate-800 rounded-2xl border border-[#EDE9E3] dark:border-slate-700 p-4 space-y-3"
-              >
-                <div className="flex items-center gap-3">
-                  {assignment.subject && (
-                    <div
-                      className="w-1 h-10 rounded-full shrink-0"
-                      style={{
-                        backgroundColor: assignment.subject.color || "#94a3b8",
-                      }}
-                    />
-                  )}
-                  <div className="flex-1 min-w-0">
-                    <Link
-                      href={`/assignments/${assignment.id}`}
-                      className="font-medium text-slate-900 dark:text-slate-100 hover:text-teal-700 transition-colors truncate block"
-                    >
-                      {assignment.title}
-                    </Link>
-                    <div className="flex items-center gap-2 mt-0.5">
-                      <span className="text-xs text-slate-500 dark:text-slate-400">
-                        {assignment.student.name}
-                      </span>
-                      {assignment.subject && (
-                        <>
-                          <span className="text-slate-300 dark:text-slate-600">·</span>
-                          <span className="text-xs text-slate-500 dark:text-slate-400">
-                            {assignment.subject.name}
-                          </span>
-                        </>
-                      )}
-                    </div>
-                  </div>
-                  <StatusBadge status={assignment.status} />
-                </div>
-                <StatusActions
-                  assignmentId={assignment.id}
-                  currentStatus={assignment.status}
-                  userRole={user.role}
-                />
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
 
       {/* Student Overview */}
       <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-4">

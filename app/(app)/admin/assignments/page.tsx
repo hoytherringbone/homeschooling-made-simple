@@ -40,8 +40,6 @@ export default async function AdminAssignmentsPage({
   const statusOptions = [
     { value: "ALL", label: "All" },
     { value: "ASSIGNED", label: "Assigned" },
-    { value: "IN_PROGRESS", label: "In Progress" },
-    { value: "SUBMITTED", label: "Submitted" },
     { value: "COMPLETED", label: "Completed" },
   ];
 

@@ -140,6 +140,11 @@ export default async function AssignmentDetailPage({ params }: PageProps) {
               day: "numeric",
             })}
           </span>
+          {assignment.gradeLabel && (
+            <span className="inline-flex items-center gap-1.5 text-sm font-bold px-2.5 py-0.5 rounded-full bg-green-50 text-green-700 border border-green-200">
+              Grade: {assignment.gradeLabel}
+            </span>
+          )}
         </div>
 
         {/* Description */}

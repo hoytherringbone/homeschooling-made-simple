@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Plus, ClipboardList } from "lucide-react";
 import { AssignmentCard } from "@/components/assignments/assignment-card";
 import { AssignmentFilters } from "@/components/assignments/assignment-filters";
+import { CsvImportDialog } from "@/components/assignments/csv-import-dialog";
 
 interface PageProps {
   searchParams: Promise<{ student?: string; subject?: string; status?: string | string[]; overdue?: string }>;
@@ -85,13 +86,19 @@ export default async function AssignmentsPage({ searchParams }: PageProps) {
           </p>
         </div>
         {!isStudent && (
-          <Link
-            href="/assignments/new"
-            className="inline-flex items-center gap-2 px-4 py-2.5 bg-teal-600 hover:bg-teal-700 text-white text-sm font-medium rounded-full transition-colors"
-          >
-            <Plus className="w-4 h-4" />
-            New Assignment
-          </Link>
+          <div className="flex items-center gap-2">
+            <CsvImportDialog
+              students={students.map((s) => ({ id: s.id, name: s.name }))}
+              subjects={subjects.map((s) => ({ id: s.id, name: s.name }))}
+            />
+            <Link
+              href="/assignments/new"
+              className="inline-flex items-center gap-2 px-4 py-2.5 bg-teal-600 hover:bg-teal-700 text-white text-sm font-medium rounded-full transition-colors"
+            >
+              <Plus className="w-4 h-4" />
+              New Assignment
+            </Link>
+          </div>
         )}
       </div>
 

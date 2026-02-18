@@ -54,7 +54,7 @@ export default async function ProgressPage() {
   const total = assignments.length;
   const completed = assignments.filter((a) => a.status === "COMPLETED").length;
   const inProgress = assignments.filter(
-    (a) => a.status === "IN_PROGRESS" || a.status === "SUBMITTED"
+    (a) => a.status === "ASSIGNED"
   ).length;
   const completionRate = total > 0 ? Math.round((completed / total) * 100) : 0;
 

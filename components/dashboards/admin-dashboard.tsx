@@ -102,7 +102,7 @@ export async function AdminDashboard({ user }: AdminDashboardProps) {
       icon: TrendingUp,
       color: "text-rose-600",
       bg: "bg-rose-50",
-      href: "/admin/assignments?status=ASSIGNED,IN_PROGRESS,SUBMITTED,RETURNED",
+      href: "/admin/assignments?status=ASSIGNED",
     },
   ];
 

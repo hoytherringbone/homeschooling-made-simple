@@ -139,7 +139,7 @@ async function main() {
     data: {
       title: "Read Charlotte's Web Ch. 1-3",
       description: "Read and write a short summary paragraph for each chapter.",
-      status: "IN_PROGRESS",
+      status: "ASSIGNED",
       priority: "MEDIUM",
       dueDate: tomorrow,
       estimatedMinutes: 30,
@@ -153,7 +153,8 @@ async function main() {
     data: {
       title: "Addition Worksheet",
       description: "Complete the two-digit addition worksheet. Try to finish without a calculator!",
-      status: "SUBMITTED",
+      status: "COMPLETED",
+      completedDate: now,
       priority: "MEDIUM",
       dueDate: now,
       estimatedMinutes: 20,
@@ -178,12 +179,12 @@ async function main() {
     },
   });
 
-  // RETURNED assignment with feedback
+  // Assignment returned with feedback (now back to ASSIGNED)
   const spellingTest = await db.assignment.create({
     data: {
       title: "Spelling Test Practice",
       description: "Practice spelling words from Unit 4. Write each word 3 times.",
-      status: "RETURNED",
+      status: "ASSIGNED",
       priority: "MEDIUM",
       dueDate: yesterday,
       estimatedMinutes: 15,
@@ -254,31 +255,17 @@ async function main() {
       },
       {
         action: "STATUS_CHANGED",
-        details: "ASSIGNED → IN_PROGRESS",
-        performedBy: parent.id,
-        performedByName: "Emma",
-        assignmentId: charlottesWeb.id,
-      },
-      {
-        action: "STATUS_CHANGED",
-        details: "IN_PROGRESS → SUBMITTED",
-        performedBy: parent.id,
+        details: "ASSIGNED → COMPLETED",
+        performedBy: liamUser.id,
         performedByName: "Liam",
         assignmentId: additionWorksheet.id,
       },
       {
         action: "STATUS_CHANGED",
-        details: "SUBMITTED → COMPLETED",
-        performedBy: parent.id,
-        performedByName: "Sarah Smith",
+        details: "ASSIGNED → COMPLETED",
+        performedBy: emmaUser.id,
+        performedByName: "Emma",
         assignmentId: solarSystem.id,
-      },
-      {
-        action: "STATUS_CHANGED",
-        details: "SUBMITTED → RETURNED",
-        performedBy: parent.id,
-        performedByName: "Sarah Smith",
-        assignmentId: spellingTest.id,
       },
       {
         action: "COMMENT_ADDED",

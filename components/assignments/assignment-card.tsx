@@ -11,6 +11,7 @@ interface AssignmentCardProps {
     priority: string;
     dueDate: Date | null;
     estimatedMinutes: number | null;
+    gradeLabel?: string | null;
     student: { id: string; name: string } | null;
     subject: { name: string; color: string | null } | null;
   };
@@ -93,6 +94,14 @@ export function AssignmentCard({ assignment, showStudent = true }: AssignmentCar
                     className={`text-xs px-1.5 py-0.5 rounded ${priorityStyle.bg} ${priorityStyle.text}`}
                   >
                     {assignment.priority.charAt(0) + assignment.priority.slice(1).toLowerCase()}
+                  </span>
+                </>
+              )}
+              {assignment.gradeLabel && (
+                <>
+                  <span className="text-slate-300">·</span>
+                  <span className="text-xs font-semibold px-1.5 py-0.5 rounded bg-green-50 text-green-700">
+                    {assignment.gradeLabel}
                   </span>
                 </>
               )}

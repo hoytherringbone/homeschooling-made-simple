@@ -3,7 +3,7 @@
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
 import { updateAssignmentStatus } from "@/lib/actions/assignments";
-import { VALID_TRANSITIONS } from "@/lib/constants";
+import { VALID_TRANSITIONS, LETTER_GRADES } from "@/lib/constants";
 
 interface StatusActionsProps {
   assignmentId: string;
@@ -12,23 +12,20 @@ interface StatusActionsProps {
 }
 
 const ACTION_LABELS: Record<string, string> = {
-  IN_PROGRESS: "Start Working",
-  SUBMITTED: "Submit",
-  COMPLETED: "Approve",
-  RETURNED: "Return with Feedback",
+  COMPLETED: "Submit",
+  ASSIGNED: "Return with Feedback",
 };
 
 const ACTION_STYLES: Record<string, string> = {
-  IN_PROGRESS: "bg-blue-600 hover:bg-blue-700 text-white",
-  SUBMITTED: "bg-teal-600 hover:bg-teal-700 text-white",
-  COMPLETED: "bg-green-600 hover:bg-green-700 text-white",
-  RETURNED: "border border-rose-300 text-rose-600 hover:bg-rose-50",
+  COMPLETED: "bg-teal-600 hover:bg-teal-700 text-white",
+  ASSIGNED: "border border-rose-300 text-rose-600 hover:bg-rose-50",
 };
 
 export function StatusActions({ assignmentId, currentStatus, userRole }: StatusActionsProps) {
   const [isPending, startTransition] = useTransition();
   const [showReturnForm, setShowReturnForm] = useState(false);
   const [returnComment, setReturnComment] = useState("");
+  const [gradeLabel, setGradeLabel] = useState("");
 
   const transition = VALID_TRANSITIONS[currentStatus];
   if (!transition) return null;
@@ -37,20 +34,23 @@ export function StatusActions({ assignmentId, currentStatus, userRole }: StatusA
   if (allowedStatuses.length === 0) return null;
 
   const handleTransition = (newStatus: string) => {
-    if (newStatus === "RETURNED") {
+    if (newStatus === "ASSIGNED") {
       setShowReturnForm(true);
       return;
     }
 
     startTransition(async () => {
+      const selectedGrade = LETTER_GRADES.find((g) => g.label === gradeLabel);
       const result = await updateAssignmentStatus({
         assignmentId,
-        newStatus: newStatus as "IN_PROGRESS" | "SUBMITTED" | "RETURNED" | "COMPLETED",
+        newStatus: newStatus as "ASSIGNED" | "COMPLETED",
+        gradeLabel: gradeLabel || undefined,
+        gradeValue: selectedGrade?.value ?? undefined,
       });
       if (result.error) {
         toast.error(result.error);
       } else {
-        toast.success(`Status updated to ${newStatus.replace("_", " ").toLowerCase()}`);
+        toast.success("Assignment submitted!");
       }
     });
   };
@@ -64,7 +64,7 @@ export function StatusActions({ assignmentId, currentStatus, userRole }: StatusA
     startTransition(async () => {
       const result = await updateAssignmentStatus({
         assignmentId,
-        newStatus: "RETURNED",
+        newStatus: "ASSIGNED",
         comment: returnComment,
       });
       if (result.error) {
@@ -77,21 +77,57 @@ export function StatusActions({ assignmentId, currentStatus, userRole }: StatusA
     });
   };
 
+  // Parent completing: show grade dropdown + approve button
+  const isParentCompleting = allowedStatuses.includes("COMPLETED") && (userRole === "PARENT" || userRole === "SUPER_ADMIN");
+
   return (
     <div className="space-y-3">
       <div className="flex items-center gap-2 flex-wrap">
-        {allowedStatuses.map((status) => (
+        {isParentCompleting ? (
+          <>
+            <select
+              value={gradeLabel}
+              onChange={(e) => setGradeLabel(e.target.value)}
+              className="rounded-full border border-[#EDE9E3] bg-white px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-teal-300 focus:border-teal-300 transition-all"
+            >
+              <option value="">No grade</option>
+              {LETTER_GRADES.map((g) => (
+                <option key={g.label} value={g.label}>
+                  {g.label}
+                </option>
+              ))}
+            </select>
+            <button
+              onClick={() => handleTransition("COMPLETED")}
+              disabled={isPending}
+              className="px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 disabled:opacity-50 bg-green-600 hover:bg-green-700 text-white"
+            >
+              {isPending ? "Updating..." : "Approve"}
+            </button>
+          </>
+        ) : (
+          allowedStatuses.map((status) => (
+            <button
+              key={status}
+              onClick={() => handleTransition(status)}
+              disabled={isPending}
+              className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 disabled:opacity-50 ${
+                ACTION_STYLES[status] || "bg-slate-100 text-slate-700"
+              }`}
+            >
+              {isPending ? "Updating..." : ACTION_LABELS[status] || status}
+            </button>
+          ))
+        )}
+        {allowedStatuses.includes("ASSIGNED") && (
           <button
-            key={status}
-            onClick={() => handleTransition(status)}
+            onClick={() => handleTransition("ASSIGNED")}
             disabled={isPending}
-            className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 disabled:opacity-50 ${
-              ACTION_STYLES[status] || "bg-slate-100 text-slate-700"
-            }`}
+            className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 disabled:opacity-50 ${ACTION_STYLES["ASSIGNED"]}`}
           >
-            {isPending ? "Updating..." : ACTION_LABELS[status] || status}
+            {isPending ? "Updating..." : ACTION_LABELS["ASSIGNED"]}
           </button>
-        ))}
+        )}
       </div>
 
       {showReturnForm && (

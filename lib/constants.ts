@@ -55,19 +55,29 @@ export const GRADE_LEVELS = [
 
 export const ASSIGNMENT_STATUS = {
   ASSIGNED: { label: "Assigned", bg: "bg-slate-100 dark:bg-slate-700", text: "text-slate-700 dark:text-slate-300" },
-  IN_PROGRESS: { label: "In Progress", bg: "bg-blue-50 dark:bg-blue-900/30", text: "text-blue-700 dark:text-blue-400" },
-  SUBMITTED: { label: "Submitted", bg: "bg-amber-50 dark:bg-amber-900/30", text: "text-amber-700 dark:text-amber-400" },
-  RETURNED: { label: "Returned", bg: "bg-rose-50 dark:bg-rose-900/30", text: "text-rose-700 dark:text-rose-400" },
   COMPLETED: { label: "Completed", bg: "bg-green-50 dark:bg-green-900/30", text: "text-green-700 dark:text-green-400" },
 } as const;
 
 export const VALID_TRANSITIONS: Record<string, { roles: string[]; to: string[] }> = {
-  ASSIGNED: { roles: ["STUDENT"], to: ["IN_PROGRESS"] },
-  IN_PROGRESS: { roles: ["STUDENT"], to: ["SUBMITTED"] },
-  SUBMITTED: { roles: ["PARENT", "SUPER_ADMIN"], to: ["COMPLETED", "RETURNED"] },
-  RETURNED: { roles: ["STUDENT"], to: ["IN_PROGRESS"] },
-  COMPLETED: { roles: ["PARENT", "SUPER_ADMIN"], to: ["RETURNED"] },
+  ASSIGNED: { roles: ["STUDENT"], to: ["COMPLETED"] },
+  COMPLETED: { roles: ["PARENT", "SUPER_ADMIN"], to: ["ASSIGNED"] },
 };
+
+export const LETTER_GRADES = [
+  { label: "A+", value: 98 },
+  { label: "A", value: 95 },
+  { label: "A-", value: 92 },
+  { label: "B+", value: 88 },
+  { label: "B", value: 85 },
+  { label: "B-", value: 82 },
+  { label: "C+", value: 78 },
+  { label: "C", value: 75 },
+  { label: "C-", value: 72 },
+  { label: "D+", value: 68 },
+  { label: "D", value: 65 },
+  { label: "D-", value: 62 },
+  { label: "F", value: 50 },
+] as const;
 
 export const PRIORITY_OPTIONS = [
   { value: "LOW", label: "Low" },

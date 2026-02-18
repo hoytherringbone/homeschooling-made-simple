@@ -97,11 +97,7 @@ export default async function AdminStudentDetailPage({ params }: { params: Promi
                 className={`text-xs px-2 py-1 rounded-full font-medium ${
                   assignment.status === "COMPLETED"
                     ? "bg-emerald-50 text-emerald-700"
-                    : assignment.status === "IN_PROGRESS"
-                      ? "bg-blue-50 text-blue-700"
-                      : assignment.status === "SUBMITTED"
-                        ? "bg-violet-50 text-violet-700"
-                        : "bg-slate-100 text-slate-600"
+                    : "bg-slate-100 text-slate-600"
                 }`}
               >
                 {assignment.status.toLowerCase().replace("_", " ")}

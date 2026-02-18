@@ -14,11 +14,13 @@ export const createAssignmentSchema = z.object({
 export const statusTransitionSchema = z
   .object({
     assignmentId: z.string().min(1),
-    newStatus: z.enum(["IN_PROGRESS", "SUBMITTED", "RETURNED", "COMPLETED"]),
+    newStatus: z.enum(["ASSIGNED", "COMPLETED"]),
     comment: z.string().max(2000).optional(),
+    gradeLabel: z.string().optional(),
+    gradeValue: z.number().optional(),
   })
   .refine(
-    (data) => data.newStatus !== "RETURNED" || (data.comment && data.comment.trim().length > 0),
+    (data) => data.newStatus !== "ASSIGNED" || (data.comment && data.comment.trim().length > 0),
     { message: "Feedback is required when returning an assignment", path: ["comment"] },
   );
 
@@ -27,6 +29,17 @@ export const createCommentSchema = z.object({
   content: z.string().min(1, "Comment cannot be empty").max(2000),
 });
 
+export const importRowSchema = z.object({
+  title: z.string().min(1, "Title is required").max(200),
+  description: z.string().max(2000).optional(),
+  studentName: z.string().min(1, "Student name is required"),
+  subjectName: z.string().optional(),
+  dueDate: z.string().optional(),
+  priority: z.enum(["LOW", "MEDIUM", "HIGH"]).default("MEDIUM"),
+  estimatedMinutes: z.coerce.number().min(1).max(480).optional(),
+});
+
 export type CreateAssignmentValues = z.infer<typeof createAssignmentSchema>;
 export type StatusTransitionValues = z.infer<typeof statusTransitionSchema>;
 export type CreateCommentValues = z.infer<typeof createCommentSchema>;
+export type ImportRowValues = z.infer<typeof importRowSchema>;
