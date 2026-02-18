@@ -1,15 +1,16 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
-import { StatCard } from "@/components/reports/stat-card";
-import { SubjectBreakdown } from "@/components/reports/subject-breakdown";
-import { StudentSummaryCard } from "@/components/reports/student-summary-card";
+import Link from "next/link";
 import {
+  BarChart3,
+  CheckSquare,
   ClipboardList,
-  CheckCircle2,
+  ChevronRight,
+  ClipboardCheck,
   TrendingUp,
   AlertCircle,
-  BarChart3,
+  Clock,
 } from "lucide-react";
 
 export default async function ReportsPage() {
@@ -19,181 +20,117 @@ export default async function ReportsPage() {
 
   const familyId = session.user.familyId;
 
-  const [assignments, students, subjects] = await Promise.all([
+  const [assignments, attendanceLogs] = await Promise.all([
     db.assignment.findMany({
       where: { familyId },
-      select: {
-        id: true,
-        status: true,
-        dueDate: true,
-        studentId: true,
-        subjectId: true,
-      },
+      select: { id: true, status: true, dueDate: true },
     }),
-    db.student.findMany({
+    db.attendanceLog.findMany({
       where: { familyId },
-      select: { id: true, name: true, gradeLevel: true },
-      orderBy: { name: "asc" },
-    }),
-    db.subject.findMany({
-      where: { familyId },
-      select: { id: true, name: true, color: true },
-      orderBy: { name: "asc" },
+      select: { hoursLogged: true },
     }),
   ]);
 
   const now = new Date();
   const total = assignments.length;
   const completed = assignments.filter((a) => a.status === "COMPLETED").length;
-  const inProgress = assignments.filter(
-    (a) => a.status === "IN_PROGRESS" || a.status === "SUBMITTED"
-  ).length;
-  const overdue = assignments.filter(
-    (a) =>
-      a.dueDate &&
-      new Date(a.dueDate) < now &&
-      a.status !== "COMPLETED"
-  ).length;
   const completionRate = total > 0 ? Math.round((completed / total) * 100) : 0;
+  const overdue = assignments.filter(
+    (a) => a.dueDate && new Date(a.dueDate) < now && a.status !== "COMPLETED"
+  ).length;
+  const totalHours = attendanceLogs.reduce((sum, l) => sum + l.hoursLogged, 0);
 
-  // Subject breakdown
-  const subjectStats = subjects.map((subject) => {
-    const subjectAssignments = assignments.filter((a) => a.subjectId === subject.id);
-    return {
-      name: subject.name,
-      color: subject.color,
-      total: subjectAssignments.length,
-      completed: subjectAssignments.filter((a) => a.status === "COMPLETED").length,
-    };
-  }).filter((s) => s.total > 0);
-
-  // No-subject assignments
-  const noSubject = assignments.filter((a) => !a.subjectId);
-  if (noSubject.length > 0) {
-    subjectStats.push({
-      name: "No Subject",
-      color: null,
-      total: noSubject.length,
-      completed: noSubject.filter((a) => a.status === "COMPLETED").length,
-    });
-  }
+  const reportTypes = [
+    {
+      title: "Progress Report",
+      description: "Student progress summaries with completion rates and grades by subject",
+      href: "/reports/progress",
+      icon: BarChart3,
+      accent: "teal",
+      iconBg: "bg-teal-50",
+      iconColor: "text-teal-600",
+      hoverBorder: "hover:border-teal-300",
+    },
+    {
+      title: "Attendance Report",
+      description: "Attendance hours by student and subject with daily breakdowns",
+      href: "/reports/attendance",
+      icon: CheckSquare,
+      accent: "blue",
+      iconBg: "bg-blue-50",
+      iconColor: "text-blue-600",
+      hoverBorder: "hover:border-blue-300",
+    },
+    {
+      title: "Assignment History",
+      description: "Complete assignment records with status, grades, and due dates",
+      href: "/reports/assignments",
+      icon: ClipboardList,
+      accent: "violet",
+      iconBg: "bg-violet-50",
+      iconColor: "text-violet-600",
+      hoverBorder: "hover:border-violet-300",
+    },
+  ];
 
   return (
     <div className="space-y-8">
       <div>
         <h1 className="text-2xl font-bold text-slate-900">Reports</h1>
         <p className="text-sm text-slate-500 mt-1">
-          Family progress overview across all students.
+          Generate detailed reports for your homeschool records.
         </p>
       </div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard
-          label="Total Assignments"
-          value={total}
-          icon={ClipboardList}
-          color="text-slate-600"
-          bg="bg-slate-100"
-        />
-        <StatCard
-          label="Completed"
-          value={completed}
-          icon={CheckCircle2}
-          color="text-green-600"
-          bg="bg-green-50"
-        />
-        <StatCard
-          label="Completion Rate"
-          value={`${completionRate}%`}
-          icon={TrendingUp}
-          color="text-teal-600"
-          bg="bg-teal-50"
-        />
-        <StatCard
-          label="Overdue"
-          value={overdue}
-          icon={AlertCircle}
-          color="text-rose-600"
-          bg="bg-rose-50"
-        />
+      <div className="bg-slate-50 rounded-2xl border border-[#EDE9E3] px-6 py-4 flex items-center gap-8 flex-wrap">
+        <div className="flex items-center gap-2">
+          <ClipboardCheck className="w-4 h-4 text-slate-400" />
+          <span className="text-sm text-slate-600">
+            <span className="font-semibold text-slate-900">{total}</span> assignments
+          </span>
+        </div>
+        <div className="flex items-center gap-2">
+          <TrendingUp className="w-4 h-4 text-teal-500" />
+          <span className="text-sm text-slate-600">
+            <span className="font-semibold text-slate-900">{completionRate}%</span> completion
+          </span>
+        </div>
+        <div className="flex items-center gap-2">
+          <AlertCircle className="w-4 h-4 text-rose-400" />
+          <span className="text-sm text-slate-600">
+            <span className="font-semibold text-slate-900">{overdue}</span> overdue
+          </span>
+        </div>
+        <div className="flex items-center gap-2">
+          <Clock className="w-4 h-4 text-blue-400" />
+          <span className="text-sm text-slate-600">
+            <span className="font-semibold text-slate-900">{Math.round(totalHours * 10) / 10}</span> attendance hrs
+          </span>
+        </div>
       </div>
 
-      {/* Status breakdown bar */}
-      {total > 0 && (
-        <div className="bg-white rounded-2xl border border-[#EDE9E3] p-6">
-          <h2 className="text-lg font-semibold text-slate-900 mb-4">
-            Status Distribution
-          </h2>
-          <div className="h-4 bg-slate-100 rounded-full overflow-hidden flex">
-            {[
-              { status: "COMPLETED", color: "bg-green-500", count: completed },
-              { status: "SUBMITTED", color: "bg-amber-400", count: assignments.filter((a) => a.status === "SUBMITTED").length },
-              { status: "IN_PROGRESS", color: "bg-blue-500", count: assignments.filter((a) => a.status === "IN_PROGRESS").length },
-              { status: "RETURNED", color: "bg-rose-400", count: assignments.filter((a) => a.status === "RETURNED").length },
-              { status: "ASSIGNED", color: "bg-slate-300", count: assignments.filter((a) => a.status === "ASSIGNED").length },
-            ].map((s) =>
-              s.count > 0 ? (
-                <div
-                  key={s.status}
-                  className={`${s.color} transition-all`}
-                  style={{ width: `${(s.count / total) * 100}%` }}
-                  title={`${s.status}: ${s.count}`}
-                />
-              ) : null
-            )}
-          </div>
-          <div className="flex items-center gap-4 mt-3 flex-wrap">
-            {[
-              { label: "Completed", color: "bg-green-500", count: completed },
-              { label: "Submitted", color: "bg-amber-400", count: assignments.filter((a) => a.status === "SUBMITTED").length },
-              { label: "In Progress", color: "bg-blue-500", count: assignments.filter((a) => a.status === "IN_PROGRESS").length },
-              { label: "Returned", color: "bg-rose-400", count: assignments.filter((a) => a.status === "RETURNED").length },
-              { label: "Assigned", color: "bg-slate-300", count: assignments.filter((a) => a.status === "ASSIGNED").length },
-            ].filter((s) => s.count > 0).map((s) => (
-              <div key={s.label} className="flex items-center gap-1.5">
-                <span className={`w-2.5 h-2.5 rounded-full ${s.color}`} />
-                <span className="text-xs text-slate-600">
-                  {s.label} ({s.count})
-                </span>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+        {reportTypes.map((report) => {
+          const Icon = report.icon;
+          return (
+            <Link key={report.href} href={report.href}>
+              <div
+                className={`bg-white rounded-2xl border border-[#EDE9E3] p-6 ${report.hoverBorder} hover:shadow-md transition-all duration-200 cursor-pointer h-full flex flex-col`}
+              >
+                <div className={`w-12 h-12 ${report.iconBg} rounded-xl flex items-center justify-center mb-4`}>
+                  <Icon className={`w-6 h-6 ${report.iconColor}`} />
+                </div>
+                <h3 className="text-lg font-semibold text-slate-900 mb-2">{report.title}</h3>
+                <p className="text-sm text-slate-500 flex-1">{report.description}</p>
+                <div className="flex items-center gap-1 mt-4 text-sm font-medium text-slate-400">
+                  <span>View report</span>
+                  <ChevronRight className="w-4 h-4" />
+                </div>
               </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Student Progress */}
-      <div>
-        <h2 className="text-lg font-semibold text-slate-900 mb-4 flex items-center gap-2">
-          <BarChart3 className="w-5 h-5 text-slate-400" />
-          By Student
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {students.map((student) => {
-            const sa = assignments.filter((a) => a.studentId === student.id);
-            return (
-              <StudentSummaryCard
-                key={student.id}
-                student={student}
-                total={sa.length}
-                completed={sa.filter((a) => a.status === "COMPLETED").length}
-                inProgress={sa.filter((a) => a.status === "IN_PROGRESS" || a.status === "SUBMITTED").length}
-                overdue={sa.filter((a) => a.dueDate && new Date(a.dueDate) < now && a.status !== "COMPLETED").length}
-              />
-            );
-          })}
-        </div>
+            </Link>
+          );
+        })}
       </div>
-
-      {/* Subject Breakdown */}
-      {subjectStats.length > 0 && (
-        <div className="bg-white rounded-2xl border border-[#EDE9E3] p-6">
-          <h2 className="text-lg font-semibold text-slate-900 mb-4">
-            By Subject
-          </h2>
-          <SubjectBreakdown subjects={subjectStats} />
-        </div>
-      )}
     </div>
   );
 }
