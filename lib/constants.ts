@@ -59,24 +59,23 @@ export const ASSIGNMENT_STATUS = {
 } as const;
 
 export const VALID_TRANSITIONS: Record<string, { roles: string[]; to: string[] }> = {
-  ASSIGNED: { roles: ["STUDENT"], to: ["COMPLETED"] },
-  COMPLETED: { roles: ["PARENT", "SUPER_ADMIN"], to: ["ASSIGNED"] },
+  ASSIGNED: { roles: ["STUDENT", "PARENT", "SUPER_ADMIN"], to: ["COMPLETED"] },
+  COMPLETED: { roles: ["PARENT", "SUPER_ADMIN"], to: ["COMPLETED", "ASSIGNED"] },
 };
 
 export const LETTER_GRADES = [
-  { label: "A+", value: 98 },
-  { label: "A", value: 95 },
-  { label: "A-", value: 92 },
-  { label: "B+", value: 88 },
-  { label: "B", value: 85 },
-  { label: "B-", value: 82 },
-  { label: "C+", value: 78 },
-  { label: "C", value: 75 },
-  { label: "C-", value: 72 },
-  { label: "D+", value: 68 },
-  { label: "D", value: 65 },
-  { label: "D-", value: 62 },
-  { label: "F", value: 50 },
+  { label: "A+", value: 4.0 },
+  { label: "A", value: 4.0 },
+  { label: "A-", value: 3.7 },
+  { label: "B+", value: 3.3 },
+  { label: "B", value: 3.0 },
+  { label: "B-", value: 2.7 },
+  { label: "C+", value: 2.3 },
+  { label: "C", value: 2.0 },
+  { label: "C-", value: 1.7 },
+  { label: "D+", value: 1.3 },
+  { label: "D", value: 1.0 },
+  { label: "F", value: 0.0 },
 ] as const;
 
 export const PRIORITY_OPTIONS = [

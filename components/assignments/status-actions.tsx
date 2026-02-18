@@ -11,15 +11,20 @@ interface StatusActionsProps {
   userRole: string;
 }
 
-const ACTION_LABELS: Record<string, string> = {
-  COMPLETED: "Submit",
-  ASSIGNED: "Return with Feedback",
-};
-
 const ACTION_STYLES: Record<string, string> = {
   COMPLETED: "bg-teal-600 hover:bg-teal-700 text-white",
   ASSIGNED: "border border-rose-300 text-rose-600 hover:bg-rose-50",
 };
+
+function getActionLabel(status: string, userRole: string): string {
+  if (status === "COMPLETED") {
+    return userRole === "STUDENT" ? "Submit" : "Mark Complete";
+  }
+  if (status === "ASSIGNED") {
+    return "Return with Feedback";
+  }
+  return status;
+}
 
 export function StatusActions({ assignmentId, currentStatus, userRole }: StatusActionsProps) {
   const [isPending, startTransition] = useTransition();
@@ -50,7 +55,9 @@ export function StatusActions({ assignmentId, currentStatus, userRole }: StatusA
       if (result.error) {
         toast.error(result.error);
       } else {
-        toast.success("Assignment submitted!");
+        toast.success(
+          userRole === "STUDENT" ? "Assignment submitted!" : "Assignment updated!"
+        );
       }
     });
   };
@@ -77,7 +84,7 @@ export function StatusActions({ assignmentId, currentStatus, userRole }: StatusA
     });
   };
 
-  // Parent completing: show grade dropdown + approve button
+  // Parent/admin viewing a completed assignment: show grade dropdown + approve + return
   const isParentCompleting = allowedStatuses.includes("COMPLETED") && (userRole === "PARENT" || userRole === "SUPER_ADMIN");
 
   return (
@@ -85,6 +92,7 @@ export function StatusActions({ assignmentId, currentStatus, userRole }: StatusA
       <div className="flex items-center gap-2 flex-wrap">
         {isParentCompleting ? (
           <>
+            <label className="text-sm font-medium text-slate-600">Grade:</label>
             <select
               value={gradeLabel}
               onChange={(e) => setGradeLabel(e.target.value)}
@@ -104,6 +112,13 @@ export function StatusActions({ assignmentId, currentStatus, userRole }: StatusA
             >
               {isPending ? "Updating..." : "Approve"}
             </button>
+            <button
+              onClick={() => handleTransition("ASSIGNED")}
+              disabled={isPending}
+              className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 disabled:opacity-50 ${ACTION_STYLES["ASSIGNED"]}`}
+            >
+              {isPending ? "Updating..." : "Return with Feedback"}
+            </button>
           </>
         ) : (
           allowedStatuses.map((status) => (
@@ -115,18 +130,9 @@ export function StatusActions({ assignmentId, currentStatus, userRole }: StatusA
                 ACTION_STYLES[status] || "bg-slate-100 text-slate-700"
               }`}
             >
-              {isPending ? "Updating..." : ACTION_LABELS[status] || status}
+              {isPending ? "Updating..." : getActionLabel(status, userRole)}
             </button>
           ))
-        )}
-        {allowedStatuses.includes("ASSIGNED") && (
-          <button
-            onClick={() => handleTransition("ASSIGNED")}
-            disabled={isPending}
-            className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 disabled:opacity-50 ${ACTION_STYLES["ASSIGNED"]}`}
-          >
-            {isPending ? "Updating..." : ACTION_LABELS["ASSIGNED"]}
-          </button>
         )}
       </div>
 
