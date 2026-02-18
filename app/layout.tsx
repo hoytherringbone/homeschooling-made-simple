@@ -12,9 +12,31 @@ const plusJakarta = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.AUTH_URL || "https://homeschooling-made-simple.replit.app"),
   title: "Home Schooling Made Simple — Organize Your Homeschool",
   description:
     "One calm, organized place to assign work, track progress, and generate reports. Built for homeschooling families.",
+  icons: {
+    icon: [
+      { url: "/favicon.png", type: "image/png" },
+      { url: "/icon.svg", type: "image/svg+xml" },
+    ],
+    apple: "/favicon.png",
+  },
+  openGraph: {
+    title: "Home Schooling Made Simple — Organize Your Homeschool",
+    description:
+      "One calm, organized place to assign work, track progress, and generate reports. Built for homeschooling families.",
+    images: [{ url: "/og-image.png", width: 1200, height: 630 }],
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Home Schooling Made Simple — Organize Your Homeschool",
+    description:
+      "One calm, organized place to assign work, track progress, and generate reports. Built for homeschooling families.",
+    images: ["/og-image.png"],
+  },
 };
 
 export default function RootLayout({
