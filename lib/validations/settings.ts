@@ -46,3 +46,11 @@ export type UpdateFamilyNameValues = z.infer<typeof updateFamilyNameSchema>;
 export type UpdateStudentValues = z.infer<typeof updateStudentSchema>;
 export type CreateStudentValues = z.infer<typeof createStudentSchema>;
 export type ResetStudentPasswordValues = z.infer<typeof resetStudentPasswordSchema>;
+
+export const createStudentLoginSchema = z.object({
+  studentId: z.string().min(1),
+  email: z.string().email("Invalid email"),
+  password: z.string().min(6, "Password must be at least 6 characters"),
+});
+
+export type CreateStudentLoginValues = z.infer<typeof createStudentLoginSchema>;

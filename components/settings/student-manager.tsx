@@ -3,9 +3,9 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { createStudent, updateStudent, deleteStudent, resetStudentPassword } from "@/lib/actions/settings";
+import { createStudent, updateStudent, deleteStudent, resetStudentPassword, createStudentLogin } from "@/lib/actions/settings";
 import { GRADE_LEVELS } from "@/lib/constants";
-import { Plus, Pencil, Trash2, X, Check, KeyRound } from "lucide-react";
+import { Plus, Pencil, Trash2, X, Check, KeyRound, UserPlus } from "lucide-react";
 
 interface Student {
   id: string;
@@ -26,6 +26,9 @@ export function StudentManager({ students }: { students: Student[] }) {
   const [password, setPassword] = useState("");
   const [resetPasswordId, setResetPasswordId] = useState<string | null>(null);
   const [newPassword, setNewPassword] = useState("");
+  const [createLoginId, setCreateLoginId] = useState<string | null>(null);
+  const [loginEmail, setLoginEmail] = useState("");
+  const [loginPassword, setLoginPassword] = useState("");
 
   const handleAdd = () => {
     if (!name.trim()) return;
@@ -101,6 +104,26 @@ export function StudentManager({ students }: { students: Student[] }) {
     });
   };
 
+  const handleCreateLogin = (studentId: string) => {
+    if (!loginEmail.trim() || !loginPassword.trim()) return;
+    startTransition(async () => {
+      const result = await createStudentLogin({
+        studentId,
+        email: loginEmail.trim(),
+        password: loginPassword.trim(),
+      });
+      if (result.error) {
+        toast.error(result.error);
+      } else {
+        toast.success("Login created successfully");
+        setCreateLoginId(null);
+        setLoginEmail("");
+        setLoginPassword("");
+        router.refresh();
+      }
+    });
+  };
+
   const startEdit = (student: Student) => {
     setEditingId(student.id);
     setName(student.name);
@@ -119,6 +142,9 @@ export function StudentManager({ students }: { students: Student[] }) {
     setCreateLogin(false);
     setResetPasswordId(null);
     setNewPassword("");
+    setCreateLoginId(null);
+    setLoginEmail("");
+    setLoginPassword("");
   };
 
   const inputClass =
@@ -193,18 +219,34 @@ export function StudentManager({ students }: { students: Student[] }) {
                     </span>
                   )}
                 </div>
-                {student.userId && (
+                {student.userId ? (
                   <button
                     onClick={() => {
                       setResetPasswordId(resetPasswordId === student.id ? null : student.id);
                       setNewPassword("");
                       setEditingId(null);
                       setShowAdd(false);
+                      setCreateLoginId(null);
                     }}
                     className="p-1.5 text-slate-400 hover:text-teal-600 hover:bg-teal-50 rounded-lg transition-colors"
                     title="Reset password"
                   >
                     <KeyRound className="w-3.5 h-3.5" />
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => {
+                      setCreateLoginId(createLoginId === student.id ? null : student.id);
+                      setLoginEmail("");
+                      setLoginPassword("");
+                      setEditingId(null);
+                      setShowAdd(false);
+                      setResetPasswordId(null);
+                    }}
+                    className="p-1.5 text-slate-400 hover:text-teal-600 hover:bg-teal-50 rounded-lg transition-colors"
+                    title="Create login"
+                  >
+                    <UserPlus className="w-3.5 h-3.5" />
                   </button>
                 )}
                 <button
@@ -254,6 +296,53 @@ export function StudentManager({ students }: { students: Student[] }) {
                   >
                     <X className="w-4 h-4" />
                   </button>
+                </div>
+              )}
+              {createLoginId === student.id && (
+                <div className="ml-11 space-y-2">
+                  <p className="text-xs text-slate-500">Create a login so this student can sign in:</p>
+                  <input
+                    type="email"
+                    value={loginEmail}
+                    onChange={(e) => setLoginEmail(e.target.value)}
+                    placeholder="Student email"
+                    className={`w-full ${inputClass}`}
+                    autoFocus
+                  />
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="password"
+                      value={loginPassword}
+                      onChange={(e) => setLoginPassword(e.target.value)}
+                      placeholder="Password (min 6 chars)"
+                      className={`flex-1 ${inputClass}`}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") handleCreateLogin(student.id);
+                        if (e.key === "Escape") {
+                          setCreateLoginId(null);
+                          setLoginEmail("");
+                          setLoginPassword("");
+                        }
+                      }}
+                    />
+                    <button
+                      onClick={() => handleCreateLogin(student.id)}
+                      disabled={isPending || !loginEmail.trim() || loginPassword.length < 6}
+                      className="p-2 text-teal-600 hover:bg-teal-50 rounded-lg transition-colors disabled:opacity-50"
+                    >
+                      <Check className="w-4 h-4" />
+                    </button>
+                    <button
+                      onClick={() => {
+                        setCreateLoginId(null);
+                        setLoginEmail("");
+                        setLoginPassword("");
+                      }}
+                      className="p-2 text-slate-400 hover:bg-slate-100 rounded-lg transition-colors"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
                 </div>
               )}
             </div>

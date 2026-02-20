@@ -11,12 +11,14 @@ import {
   updateStudentSchema,
   createStudentSchema,
   resetStudentPasswordSchema,
+  createStudentLoginSchema,
   type CreateSubjectValues,
   type UpdateSubjectValues,
   type UpdateFamilyNameValues,
   type UpdateStudentValues,
   type CreateStudentValues,
   type ResetStudentPasswordValues,
+  type CreateStudentLoginValues,
 } from "@/lib/validations/settings";
 import { SUBJECT_COLORS } from "@/lib/constants";
 
@@ -244,5 +246,48 @@ export async function resetStudentPassword(values: ResetStudentPasswordValues) {
     data: { hashedPassword },
   });
 
+  return { success: true };
+}
+
+// --- Create Login for Existing Student ---
+
+export async function createStudentLogin(values: CreateStudentLoginValues) {
+  const session = await auth();
+  if (!session?.user?.id || !session.user.familyId) return { error: "Not authenticated" };
+  if (!isParent(session.user.role)) return { error: "Only parents can manage students" };
+
+  const parsed = createStudentLoginSchema.safeParse(values);
+  if (!parsed.success) return { error: parsed.error.issues[0]?.message || "Invalid data" };
+
+  const { studentId, email, password } = parsed.data;
+  const familyId = session.user.familyId;
+
+  const student = await db.student.findFirst({
+    where: { id: studentId, familyId },
+  });
+  if (!student) return { error: "Student not found" };
+  if (student.userId) return { error: "This student already has a login account" };
+
+  const existingUser = await db.user.findUnique({ where: { email } });
+  if (existingUser) return { error: "An account with this email already exists" };
+
+  const hashedPassword = await bcrypt.hash(password, 10);
+  const user = await db.user.create({
+    data: {
+      email,
+      name: student.name,
+      hashedPassword,
+      role: "STUDENT",
+      familyId,
+      onboarded: true,
+    },
+  });
+
+  await db.student.update({
+    where: { id: studentId },
+    data: { userId: user.id },
+  });
+
+  revalidatePath("/settings");
   return { success: true };
 }
