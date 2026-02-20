@@ -3,7 +3,7 @@
 import { ScrollReveal } from "@/components/scroll-reveal";
 import {
   ClipboardList,
-  ArrowRightLeft,
+  FileUp,
   BarChart3,
   Calendar,
   FileText,
@@ -27,10 +27,10 @@ const features: {
     iconColor: "text-teal-600",
   },
   {
-    icon: ArrowRightLeft,
-    title: "Submit, Review, Return",
+    icon: FileUp,
+    title: "Easy Import & Export",
     description:
-      "Students mark work as done. You review it, approve it, or send it back with feedback. A simple workflow that keeps everyone on the same page.",
+      "Bulk-import assignments from a CSV file in seconds. Export grades, attendance records, and GPA whenever you need them. Save time with bulk data import and export.",
     iconBg: "bg-blue-50",
     iconColor: "text-blue-600",
   },
