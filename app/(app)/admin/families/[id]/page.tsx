@@ -4,6 +4,7 @@ import { db } from "@/lib/db";
 import { PageHeader } from "@/components/page-header";
 import Link from "next/link";
 import { ArrowLeft, ChevronRight } from "lucide-react";
+import { DeleteFamilyButton } from "./delete-family-button";
 
 export default async function AdminFamilyDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const session = await auth();
@@ -176,6 +177,12 @@ export default async function AdminFamilyDetailPage({ params }: { params: Promis
           )}
         </div>
       </div>
+
+      {family.name !== "HSMS Administration" && (
+        <div className="mt-8 pt-6 border-t border-[#EDE9E3] dark:border-slate-700">
+          <DeleteFamilyButton familyId={family.id} familyName={family.name} />
+        </div>
+      )}
     </div>
   );
 }
