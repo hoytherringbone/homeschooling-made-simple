@@ -7,7 +7,7 @@ import {
   BookOpen,
   ClipboardCheck,
   Home,
-  TrendingUp,
+  Activity,
   ChevronRight,
 } from "lucide-react";
 
@@ -20,7 +20,7 @@ interface AdminDashboardProps {
 }
 
 export async function AdminDashboard({ user }: AdminDashboardProps) {
-  const [families, allUsers, allStudents, allAssignments] = await Promise.all([
+  const [families, allUsers, allStudents, allAssignments, activityCount] = await Promise.all([
     db.family.findMany({
       include: {
         _count: { select: { users: true, students: true, assignments: true } },
@@ -42,6 +42,7 @@ export async function AdminDashboard({ user }: AdminDashboardProps) {
     db.assignment.findMany({
       select: { status: true, createdAt: true },
     }),
+    db.activityLog.count(),
   ]);
 
   const parentUsers = allUsers.filter((u) => u.role === "PARENT");
@@ -49,10 +50,6 @@ export async function AdminDashboard({ user }: AdminDashboardProps) {
   const completedAssignments = allAssignments.filter(
     (a) => a.status === "COMPLETED",
   );
-  const activeAssignments = allAssignments.filter(
-    (a) => a.status !== "COMPLETED",
-  );
-
   const firstName = user.name?.split(" ")[0] || "Admin";
 
   const stats = [
@@ -97,12 +94,12 @@ export async function AdminDashboard({ user }: AdminDashboardProps) {
       href: "/admin/assignments?status=COMPLETED",
     },
     {
-      label: "Active",
-      value: activeAssignments.length,
-      icon: TrendingUp,
+      label: "User Activity",
+      value: activityCount,
+      icon: Activity,
       color: "text-rose-600",
       bg: "bg-rose-50",
-      href: "/admin/assignments?status=ASSIGNED",
+      href: "/admin/activity",
     },
   ];
 
