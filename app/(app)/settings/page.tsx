@@ -53,6 +53,9 @@ export default async function SettingsPage() {
           <Palette className="w-5 h-5 text-slate-400" />
           <h2 className="text-lg font-semibold text-slate-900">Subjects</h2>
         </div>
+        <p className="text-xs text-slate-500 -mt-2 mb-2">
+          Click the gear icon on a subject to configure grading weights (Test, Quiz, Homework, Project percentages).
+        </p>
         <SubjectManager subjects={subjects} />
       </section>
 

@@ -9,3 +9,9 @@ export const createAttendanceSchema = z.object({
 });
 
 export type CreateAttendanceInput = z.infer<typeof createAttendanceSchema>;
+
+export const updateAttendanceSchema = createAttendanceSchema.extend({
+  id: z.string().min(1, "Log ID is required"),
+});
+
+export type UpdateAttendanceInput = z.infer<typeof updateAttendanceSchema>;

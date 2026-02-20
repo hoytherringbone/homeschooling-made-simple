@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
 import { AttendanceForm } from "@/components/attendance/attendance-form";
 import { AttendanceSummary } from "@/components/attendance/attendance-summary";
-import { DeleteLogButton } from "@/components/attendance/delete-log-button";
+import { AttendanceLogRow } from "@/components/attendance/attendance-log-row";
 
 export default async function AttendancePage() {
   const session = await auth();
@@ -119,31 +119,21 @@ export default async function AttendancePage() {
               </thead>
               <tbody>
                 {logs.map((log) => (
-                  <tr
+                  <AttendanceLogRow
                     key={log.id}
-                    className="border-b border-[#EDE9E3] last:border-0"
-                  >
-                    <td className="px-5 py-3 text-slate-700">
-                      {new Date(log.date).toLocaleDateString()}
-                    </td>
-                    <td className="px-5 py-3 text-slate-900 font-medium">
-                      {log.student.name}
-                    </td>
-                    <td className="px-5 py-3 text-slate-600">
-                      {log.subjectId
-                        ? subjectMap.get(log.subjectId) || "—"
-                        : "General"}
-                    </td>
-                    <td className="px-5 py-3 text-slate-900 font-medium">
-                      {log.hoursLogged}h
-                    </td>
-                    <td className="px-5 py-3 text-slate-500 max-w-[200px] truncate">
-                      {log.notes || "—"}
-                    </td>
-                    <td className="px-5 py-3">
-                      <DeleteLogButton logId={log.id} />
-                    </td>
-                  </tr>
+                    log={{
+                      id: log.id,
+                      date: log.date.toISOString().split("T")[0],
+                      hoursLogged: log.hoursLogged,
+                      studentId: log.studentId,
+                      studentName: log.student.name,
+                      subjectId: log.subjectId,
+                      subjectName: log.subjectId ? subjectMap.get(log.subjectId) || "\u2014" : "General",
+                      notes: log.notes,
+                    }}
+                    students={students}
+                    subjects={subjects}
+                  />
                 ))}
               </tbody>
             </table>

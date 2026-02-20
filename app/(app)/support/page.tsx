@@ -112,10 +112,6 @@ On the Progress Reports page, subjects with weights configured will show "weight
         question: "How do I switch to dark mode?",
         answer: `Click the sun/moon icon in the top right corner of any page. This toggles between light mode and dark mode. Your preference is saved automatically.`,
       },
-      {
-        question: "How do I change notification preferences?",
-        answer: `Go to Settings from the sidebar. Under the Notifications section, you can toggle email notifications and in-app notifications on or off. You'll receive notifications when students submit assignments, when assignments are returned with feedback, and other important updates.`,
-      },
     ],
   },
 ];
