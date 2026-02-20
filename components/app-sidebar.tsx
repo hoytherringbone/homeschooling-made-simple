@@ -19,6 +19,7 @@ import {
   X,
   Home,
   GraduationCap,
+  HelpCircle,
 } from "lucide-react";
 import { Logo } from "@/components/logo";
 import { useState } from "react";
@@ -33,6 +34,7 @@ const parentNav = [
   { label: "Attendance", href: "/attendance", icon: CheckSquare },
   { label: "Goals", href: "/goals", icon: Target },
   { label: "Notifications", href: "/notifications", icon: Bell },
+  { label: "Support", href: "/support", icon: HelpCircle },
 ];
 
 const adminNav = [
@@ -42,6 +44,7 @@ const adminNav = [
   { label: "Students", href: "/admin/students", icon: GraduationCap },
   { label: "Assignments", href: "/admin/assignments", icon: ClipboardList },
   { label: "Settings", href: "/settings", icon: Settings },
+  { label: "Support", href: "/support", icon: HelpCircle },
 ];
 
 const studentNav = [
@@ -50,6 +53,7 @@ const studentNav = [
   { label: "Progress", href: "/progress", icon: BarChart3 },
   { label: "Calendar", href: "/calendar", icon: Calendar },
   { label: "Notifications", href: "/notifications", icon: Bell },
+  { label: "Support", href: "/support", icon: HelpCircle },
 ];
 
 interface AppSidebarProps {
