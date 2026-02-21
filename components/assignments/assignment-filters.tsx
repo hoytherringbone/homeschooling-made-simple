@@ -28,6 +28,7 @@ export function AssignmentFilters({
   const currentStudent = searchParams.get("student") || "";
   const currentSubject = searchParams.get("subject") || "";
   const currentStatus = searchParams.get("status") || "";
+  const currentRange = searchParams.get("range") || "";
 
   const updateFilter = (key: string, value: string) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -89,7 +90,17 @@ export function AssignmentFilters({
         </select>
       )}
 
-      {(currentStudent || currentSubject || currentStatus) && (
+      <select
+        value={currentRange}
+        onChange={(e) => updateFilter("range", e.target.value)}
+        className={selectClass}
+      >
+        <option value="">All Assignments</option>
+        <option value="week">This Week</option>
+        <option value="month">This Month</option>
+      </select>
+
+      {(currentStudent || currentSubject || currentStatus || currentRange) && (
         <button
           onClick={() => router.push(pathname)}
           className="text-xs text-slate-500 hover:text-slate-700 underline underline-offset-2 transition-colors"

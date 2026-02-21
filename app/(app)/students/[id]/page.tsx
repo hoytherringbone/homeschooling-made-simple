@@ -2,42 +2,77 @@ import { auth } from "@/lib/auth";
 import { redirect, notFound } from "next/navigation";
 import { db } from "@/lib/db";
 import Link from "next/link";
-import { ArrowLeft, Plus, ClipboardList } from "lucide-react";
-import { AssignmentCard } from "@/components/assignments/assignment-card";
+import { ArrowLeft, Plus } from "lucide-react";
+import { AssignmentFilters } from "@/components/assignments/assignment-filters";
+import { CatchUpFlow } from "@/components/assignments/catch-up-flow";
 
 interface PageProps {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ subject?: string; status?: string; range?: string }>;
 }
 
-export default async function StudentDetailPage({ params }: PageProps) {
+export default async function StudentDetailPage({ params, searchParams }: PageProps) {
   const session = await auth();
   if (!session?.user?.id || !session.user.familyId) redirect("/login");
   if (session.user.role === "STUDENT") redirect("/dashboard");
 
   const { id } = await params;
+  const sp = await searchParams;
+  const familyId = session.user.familyId;
 
   const student = await db.student.findFirst({
-    where: { id, familyId: session.user.familyId },
-    include: {
-      assignments: {
-        include: {
-          student: { select: { id: true, name: true } },
-          subject: { select: { name: true, color: true } },
-        },
-        orderBy: [{ dueDate: "asc" }, { assignedDate: "desc" }],
-      },
-    },
+    where: { id, familyId },
+    select: { id: true, name: true, gradeLevel: true },
   });
 
   if (!student) notFound();
 
-  const total = student.assignments.length;
-  const completed = student.assignments.filter(
-    (a) => a.status === "COMPLETED"
-  ).length;
-  const assigned = student.assignments.filter(
-    (a) => a.status === "ASSIGNED"
-  ).length;
+  // Build assignment where clause
+  const assignmentWhere: Record<string, unknown> = {
+    studentId: id,
+    familyId,
+  };
+
+  if (sp.subject) assignmentWhere.subjectId = sp.subject;
+  if (sp.status) assignmentWhere.status = sp.status;
+
+  // Time range filter
+  if (sp.range === "week") {
+    const now = new Date();
+    const day = now.getDay();
+    const monday = new Date(now);
+    monday.setDate(now.getDate() - (day === 0 ? 6 : day - 1));
+    monday.setHours(0, 0, 0, 0);
+    const sunday = new Date(monday);
+    sunday.setDate(monday.getDate() + 6);
+    sunday.setHours(23, 59, 59, 999);
+    assignmentWhere.dueDate = { gte: monday, lte: sunday };
+  } else if (sp.range === "month") {
+    const now = new Date();
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+    const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999);
+    assignmentWhere.dueDate = { gte: startOfMonth, lte: endOfMonth };
+  }
+
+  const [assignments, subjects] = await Promise.all([
+    db.assignment.findMany({
+      where: assignmentWhere,
+      include: {
+        student: { select: { id: true, name: true } },
+        subject: { select: { name: true, color: true } },
+      },
+      orderBy: [{ dueDate: "asc" }, { assignedDate: "desc" }],
+    }),
+    db.subject.findMany({
+      where: { familyId },
+      select: { id: true, name: true },
+      orderBy: { name: "asc" },
+    }),
+  ]);
+
+  const total = assignments.length;
+  const completed = assignments.filter((a) => a.status === "COMPLETED").length;
+  const assigned = assignments.filter((a) => a.status === "ASSIGNED").length;
 
   const initials = student.name
     .split(" ")
@@ -45,6 +80,16 @@ export default async function StudentDetailPage({ params }: PageProps) {
     .join("")
     .toUpperCase()
     .slice(0, 2);
+
+  // Serialize assignments for the client component (dates → ISO strings)
+  const serializedAssignments = assignments.map((a) => ({
+    ...a,
+    dueDate: a.dueDate ? a.dueDate.toISOString() : null,
+    assignedDate: a.assignedDate.toISOString(),
+    completedDate: a.completedDate ? a.completedDate.toISOString() : null,
+    createdAt: a.createdAt.toISOString(),
+    updatedAt: a.updatedAt.toISOString(),
+  }));
 
   return (
     <div className="space-y-6">
@@ -101,33 +146,19 @@ export default async function StudentDetailPage({ params }: PageProps) {
         </div>
       </div>
 
-      {/* Assignments */}
-      <div>
-        <h2 className="text-lg font-semibold text-slate-900 mb-3">
-          Assignments
-        </h2>
-        {student.assignments.length === 0 ? (
-          <div className="text-center py-12">
-            <div className="w-12 h-12 bg-slate-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-              <ClipboardList className="w-6 h-6 text-slate-400" />
-            </div>
-            <p className="text-sm text-slate-500">
-              No assignments yet for {student.name}.
-            </p>
-          </div>
-        ) : (
-          <div className="space-y-3">
-            {student.assignments.map((assignment) => (
-              <AssignmentCard
-                key={assignment.id}
-                assignment={assignment}
-                showStudent={false}
-                backPath={`/students/${id}`}
-              />
-            ))}
-          </div>
-        )}
-      </div>
+      {/* Filters */}
+      <AssignmentFilters
+        students={[]}
+        subjects={subjects.map((s) => ({ value: s.id, label: s.name }))}
+        showStudentFilter={false}
+      />
+
+      {/* Assignments with Catch Up */}
+      <CatchUpFlow
+        assignments={serializedAssignments}
+        studentId={student.id}
+        backPath={`/students/${id}`}
+      />
     </div>
   );
 }

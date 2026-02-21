@@ -8,7 +8,7 @@ import { AssignmentFilters } from "@/components/assignments/assignment-filters";
 import { CsvImportDialog } from "@/components/assignments/csv-import-dialog";
 
 interface PageProps {
-  searchParams: Promise<{ student?: string; subject?: string; status?: string | string[]; overdue?: string }>;
+  searchParams: Promise<{ student?: string; subject?: string; status?: string | string[]; overdue?: string; range?: string }>;
 }
 
 export default async function AssignmentsPage({ searchParams }: PageProps) {
@@ -36,6 +36,24 @@ export default async function AssignmentsPage({ searchParams }: PageProps) {
 
   if (params.subject) {
     where.subjectId = params.subject;
+  }
+
+  // Time range filter
+  if (params.range === "week") {
+    const now = new Date();
+    const day = now.getDay();
+    const monday = new Date(now);
+    monday.setDate(now.getDate() - (day === 0 ? 6 : day - 1));
+    monday.setHours(0, 0, 0, 0);
+    const sunday = new Date(monday);
+    sunday.setDate(monday.getDate() + 6);
+    sunday.setHours(23, 59, 59, 999);
+    where.dueDate = { gte: monday, lte: sunday };
+  } else if (params.range === "month") {
+    const now = new Date();
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+    const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999);
+    where.dueDate = { gte: startOfMonth, lte: endOfMonth };
   }
 
   if (params.overdue === "true") {

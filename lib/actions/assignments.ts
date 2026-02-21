@@ -509,3 +509,53 @@ export async function bulkCreateAssignments(rows: ImportRowValues[]) {
 
   return { success: true, count: toCreate.length };
 }
+
+export async function bulkShiftDueDates(assignmentIds: string[], daysToShift: number) {
+  const session = await auth();
+  if (!session?.user?.id || !session.user.familyId) {
+    return { error: "Not authenticated" };
+  }
+  if (session.user.role !== "PARENT" && session.user.role !== "SUPER_ADMIN") {
+    return { error: "Only parents can reschedule assignments" };
+  }
+
+  if (!Number.isInteger(daysToShift) || daysToShift < 1 || daysToShift > 365) {
+    return { error: "Days must be a whole number between 1 and 365" };
+  }
+
+  if (!assignmentIds.length) {
+    return { error: "No assignments selected" };
+  }
+
+  // Verify all assignments belong to this family and have due dates
+  const assignments = await db.assignment.findMany({
+    where: {
+      id: { in: assignmentIds },
+      familyId: session.user.familyId,
+      dueDate: { not: null },
+    },
+    select: { id: true, dueDate: true },
+  });
+
+  if (assignments.length !== assignmentIds.length) {
+    return { error: "Some assignments were not found or have no due date" };
+  }
+
+  // Shift all due dates in a transaction
+  await db.$transaction(
+    assignments.map((a) =>
+      db.assignment.update({
+        where: { id: a.id },
+        data: {
+          dueDate: new Date(a.dueDate!.getTime() + daysToShift * 24 * 60 * 60 * 1000),
+        },
+      })
+    )
+  );
+
+  revalidatePath("/assignments");
+  revalidatePath("/students");
+  revalidatePath("/dashboard");
+
+  return { success: true, count: assignments.length };
+}
