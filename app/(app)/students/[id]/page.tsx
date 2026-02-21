@@ -146,18 +146,18 @@ export default async function StudentDetailPage({ params, searchParams }: PagePr
         </div>
       </div>
 
-      {/* Filters */}
-      <AssignmentFilters
-        students={[]}
-        subjects={subjects.map((s) => ({ value: s.id, label: s.name }))}
-        showStudentFilter={false}
-      />
-
-      {/* Assignments with Catch Up */}
+      {/* Assignments with Catch Up + Filters */}
       <CatchUpFlow
         assignments={serializedAssignments}
         studentId={student.id}
         backPath={`/students/${id}`}
+        filters={
+          <AssignmentFilters
+            students={[]}
+            subjects={subjects.map((s) => ({ value: s.id, label: s.name }))}
+            showStudentFilter={false}
+          />
+        }
       />
     </div>
   );

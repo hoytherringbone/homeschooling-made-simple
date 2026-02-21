@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState, useTransition, type ReactNode } from "react";
 import { CalendarClock } from "lucide-react";
 import { AssignmentCard } from "@/components/assignments/assignment-card";
 import { bulkShiftDueDates } from "@/lib/actions/assignments";
@@ -22,11 +22,12 @@ interface CatchUpFlowProps {
   assignments: SerializedAssignment[];
   studentId: string;
   backPath: string;
+  filters?: ReactNode;
 }
 
 type Mode = "idle" | "selecting" | "confirming";
 
-export function CatchUpFlow({ assignments, studentId, backPath }: CatchUpFlowProps) {
+export function CatchUpFlow({ assignments, studentId, backPath, filters }: CatchUpFlowProps) {
   const [mode, setMode] = useState<Mode>("idle");
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [days, setDays] = useState("");
@@ -88,18 +89,19 @@ export function CatchUpFlow({ assignments, studentId, backPath }: CatchUpFlowPro
   if (mode === "idle") {
     return (
       <div>
-        <div className="flex items-center justify-between mb-3">
-          <h2 className="text-lg font-semibold text-slate-900">Assignments</h2>
-          {eligible.length > 0 && (
-            <button
-              onClick={() => setMode("selecting")}
-              className="inline-flex items-center gap-2 px-4 py-2 border border-[#EDE9E3] text-sm font-medium text-slate-700 rounded-full hover:border-teal-300 hover:text-teal-700 transition-colors"
-            >
-              <CalendarClock className="w-4 h-4" />
-              Catch Up
-            </button>
-          )}
+        {/* Filters row with Catch Up button */}
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex-1">{filters}</div>
+          <button
+            onClick={() => setMode("selecting")}
+            className="inline-flex items-center gap-2 px-4 py-2 border border-[#EDE9E3] text-sm font-medium text-slate-700 rounded-full hover:border-teal-300 hover:text-teal-700 transition-colors shrink-0 ml-3"
+          >
+            <CalendarClock className="w-4 h-4" />
+            Catch Up
+          </button>
         </div>
+
+        <h2 className="text-lg font-semibold text-slate-900 mb-3">Assignments</h2>
         {assignments.length === 0 ? (
           <div className="text-center py-12">
             <p className="text-sm text-slate-500">No assignments to display.</p>
