@@ -1,8 +1,7 @@
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 
-// Replace this with your actual Google Form embed URL
-const GOOGLE_FORM_URL = "https://docs.google.com/forms/d/e/YOUR_FORM_ID/viewform?embedded=true";
+const GOOGLE_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLScnGWMZC65bAgGQJUtkQk7AknIuSBg5s37ZCWkUfC5ZjG7B9g/viewform?embedded=true";
 
 export default function FeedbackPage() {
   return (
@@ -27,7 +26,7 @@ export default function FeedbackPage() {
         <iframe
           src={GOOGLE_FORM_URL}
           width="100%"
-          height="800"
+          height="1303"
           className="border-0"
           title="Feedback Form"
         >
