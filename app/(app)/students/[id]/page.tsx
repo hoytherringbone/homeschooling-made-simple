@@ -95,25 +95,25 @@ export default async function StudentDetailPage({ params, searchParams }: PagePr
     <div className="space-y-6">
       <Link
         href="/students"
-        className="inline-flex items-center gap-1.5 text-sm text-slate-500 hover:text-slate-700 transition-colors"
+        className="inline-flex items-center gap-1.5 text-sm text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300 transition-colors"
       >
         <ArrowLeft className="w-4 h-4" />
         Back to students
       </Link>
 
       {/* Student header */}
-      <div className="bg-white rounded-2xl border border-[#EDE9E3] p-6">
+      <div className="bg-white dark:bg-slate-800 rounded-2xl border border-[#EDE9E3] dark:border-slate-700 p-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
             <div className="w-14 h-14 bg-teal-600 rounded-full flex items-center justify-center">
               <span className="text-lg font-bold text-white">{initials}</span>
             </div>
             <div>
-              <h1 className="text-xl font-bold text-slate-900">
+              <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100">
                 {student.name}
               </h1>
               {student.gradeLevel && (
-                <p className="text-sm text-slate-500">
+                <p className="text-sm text-slate-500 dark:text-slate-400">
                   {student.gradeLevel} Grade
                 </p>
               )}
@@ -131,9 +131,9 @@ export default async function StudentDetailPage({ params, searchParams }: PagePr
         {/* Stats row */}
         <div className="grid grid-cols-3 gap-3 mt-6">
           {[
-            { label: "Total", value: total, color: "bg-slate-50 text-slate-700" },
-            { label: "Assigned", value: assigned, color: "bg-blue-50 text-blue-700" },
-            { label: "Completed", value: completed, color: "bg-green-50 text-green-700" },
+            { label: "Total", value: total, color: "bg-slate-50 dark:bg-slate-700 text-slate-700 dark:text-slate-300" },
+            { label: "Assigned", value: assigned, color: "bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400" },
+            { label: "Completed", value: completed, color: "bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-400" },
           ].map((stat) => (
             <div
               key={stat.label}

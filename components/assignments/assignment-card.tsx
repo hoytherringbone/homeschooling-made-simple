@@ -43,14 +43,14 @@ export function AssignmentCard({ assignment, showStudent = true, backPath, selec
     PRIORITY_COLORS[assignment.priority as keyof typeof PRIORITY_COLORS];
 
   const cardContent = (
-    <div className={`bg-white rounded-2xl border p-4 transition-all duration-200 ${
+    <div className={`bg-white dark:bg-slate-800 rounded-2xl border p-4 transition-all duration-200 ${
       disabled
-        ? "border-[#EDE9E3] opacity-50"
+        ? "border-[#EDE9E3] dark:border-slate-700 opacity-50"
         : selectable
           ? selected
-            ? "border-teal-400 bg-teal-50/30 shadow-sm"
-            : "border-[#EDE9E3] hover:border-teal-200 cursor-pointer"
-          : "border-[#EDE9E3] hover:shadow-sm hover:border-teal-200 cursor-pointer"
+            ? "border-teal-400 bg-teal-50/30 dark:bg-teal-900/20 shadow-sm"
+            : "border-[#EDE9E3] dark:border-slate-700 hover:border-teal-200 dark:hover:border-teal-600 cursor-pointer"
+          : "border-[#EDE9E3] dark:border-slate-700 hover:shadow-sm hover:border-teal-200 dark:hover:border-teal-600 cursor-pointer"
     }`}>
       <div className="flex items-start gap-3">
         {assignment.subject && (
@@ -61,14 +61,14 @@ export function AssignmentCard({ assignment, showStudent = true, backPath, selec
         )}
         <div className="flex-1 min-w-0">
           <div className="flex items-start justify-between gap-3">
-            <p className="font-medium text-slate-900 truncate">
+            <p className="font-medium text-slate-900 dark:text-slate-100 truncate">
               {assignment.title}
             </p>
             {selectable && !disabled ? (
               <div className={`shrink-0 w-7 h-7 rounded-lg border-2 flex items-center justify-center transition-colors ${
                 selected
                   ? "bg-teal-600 border-teal-600"
-                  : "border-slate-300 bg-white hover:border-teal-400"
+                  : "border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 hover:border-teal-400"
               }`}>
                 {selected && (
                   <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
@@ -82,29 +82,29 @@ export function AssignmentCard({ assignment, showStudent = true, backPath, selec
           </div>
           <div className="flex items-center gap-2 mt-1.5 flex-wrap">
             {showStudent && assignment.student && (
-              <span className="text-xs text-slate-500">
+              <span className="text-xs text-slate-500 dark:text-slate-400">
                 {assignment.student.name}
               </span>
             )}
             {showStudent && assignment.student && assignment.subject && (
-              <span className="text-slate-300">·</span>
+              <span className="text-slate-300 dark:text-slate-600">·</span>
             )}
             {assignment.subject && (
-              <span className="text-xs text-slate-500">
+              <span className="text-xs text-slate-500 dark:text-slate-400">
                 {assignment.subject.name}
               </span>
             )}
             {assignment.category && (
               <>
-                <span className="text-slate-300">·</span>
-                <span className="text-xs px-1.5 py-0.5 rounded bg-indigo-50 text-indigo-600">
+                <span className="text-slate-300 dark:text-slate-600">·</span>
+                <span className="text-xs px-1.5 py-0.5 rounded bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400">
                   {categoryLabels[assignment.category] || assignment.category}
                 </span>
               </>
             )}
             {dueLabel && (
               <>
-                <span className="text-slate-300">·</span>
+                <span className="text-slate-300 dark:text-slate-600">·</span>
                 <span
                   className={`text-xs flex items-center gap-1 ${
                     isOverdue ? "text-rose-600 font-medium" : "text-slate-500"
@@ -117,7 +117,7 @@ export function AssignmentCard({ assignment, showStudent = true, backPath, selec
             )}
             {assignment.estimatedMinutes && (
               <>
-                <span className="text-slate-300">·</span>
+                <span className="text-slate-300 dark:text-slate-600">·</span>
                 <span className="text-xs text-slate-400 flex items-center gap-1">
                   <Clock className="w-3 h-3" />
                   {assignment.estimatedMinutes}m
@@ -126,7 +126,7 @@ export function AssignmentCard({ assignment, showStudent = true, backPath, selec
             )}
             {priorityStyle && assignment.priority !== "MEDIUM" && (
               <>
-                <span className="text-slate-300">·</span>
+                <span className="text-slate-300 dark:text-slate-600">·</span>
                 <span
                   className={`text-xs px-1.5 py-0.5 rounded ${priorityStyle.bg} ${priorityStyle.text}`}
                 >
@@ -136,8 +136,8 @@ export function AssignmentCard({ assignment, showStudent = true, backPath, selec
             )}
             {assignment.gradeLabel && (
               <>
-                <span className="text-slate-300">·</span>
-                <span className="text-xs font-semibold px-1.5 py-0.5 rounded bg-green-50 text-green-700">
+                <span className="text-slate-300 dark:text-slate-600">·</span>
+                <span className="text-xs font-semibold px-1.5 py-0.5 rounded bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-400">
                   {assignment.gradeLabel}
                 </span>
               </>
