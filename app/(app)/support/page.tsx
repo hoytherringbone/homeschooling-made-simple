@@ -1,4 +1,5 @@
-import { HelpCircle, BookOpen, GraduationCap, BarChart3, Settings } from "lucide-react";
+import Link from "next/link";
+import { HelpCircle, BookOpen, GraduationCap, BarChart3, Settings, MessageSquarePlus } from "lucide-react";
 import {
   Accordion,
   AccordionItem,
@@ -126,6 +127,26 @@ export default function SupportPage() {
         <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
           Frequently asked questions about using HSMS.
         </p>
+      </div>
+
+      <div className="bg-white dark:bg-slate-800 rounded-2xl border border-[#EDE9E3] dark:border-slate-700 p-6 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <MessageSquarePlus className="w-5 h-5 text-teal-600 dark:text-teal-400" strokeWidth={1.75} />
+          <div>
+            <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+              Have feedback or need help?
+            </h2>
+            <p className="text-sm text-slate-500 dark:text-slate-400">
+              Let us know what&apos;s working, what&apos;s not, or what you&apos;d like to see next.
+            </p>
+          </div>
+        </div>
+        <Link
+          href="/support/feedback"
+          className="shrink-0 inline-flex items-center px-4 py-2 rounded-lg bg-teal-600 text-white text-sm font-medium hover:bg-teal-700 transition-colors"
+        >
+          Give Feedback
+        </Link>
       </div>
 
       {sections.map((section) => (
